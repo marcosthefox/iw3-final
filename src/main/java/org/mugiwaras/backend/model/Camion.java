@@ -1,14 +1,12 @@
-package org.mugiwaras.backend.model.business;
+package org.mugiwaras.backend.model;
 
 
 import lombok.*;
 
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "camion")
