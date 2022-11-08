@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "orden")
@@ -38,6 +39,12 @@ public class Orden implements Serializable {
     private Detalle detalle;
 
     //VER FECHAS!!!!
+    @Column(name = "preset")
+    private Float preset;
+
+    @Column(name = "fecha_turno_carga")
+    private OffsetDateTime fechaTurnoCarga;
+
 
 
 }

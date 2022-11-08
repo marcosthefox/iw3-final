@@ -1,12 +1,12 @@
 package org.mugiwaras.backend.model.business.implementations;
 
 import lombok.extern.slf4j.Slf4j;
-import org.mugiwaras.backend.model.Cliente;
+import org.mugiwaras.backend.model.Producto;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
-import org.mugiwaras.backend.model.business.interfaces.IClienteBusiness;
-import org.mugiwaras.backend.model.persistence.ClienteRepository;
+import org.mugiwaras.backend.model.business.interfaces.IProductoBusiness;
+import org.mugiwaras.backend.model.persistence.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,54 +15,52 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class ClienteBusiness implements IClienteBusiness {
+public class ProductoBusiness implements IProductoBusiness {
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    ProductoRepository productoRepository;
 
     @Override
-    public Cliente load(Long rs) throws BusinessException, NotFoundException {
-        Optional<Cliente> cliente;
+    public Producto load(long id) throws BusinessException, NotFoundException {
+        Optional<Producto> producto;
         try {
-            cliente = clienteRepository.findById(rs);
+            producto = productoRepository.findById(id);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw BusinessException.builder().ex(e).build();
         }
 
-        if (cliente.equals(null)) {
-            throw NotFoundException.builder().message("No se encontro el chofer con razon social: " + rs).build();
+        if(producto.isEmpty()){
+            throw NotFoundException.builder().message("No se encontro el producto con ID: " + id).build();
         }
 
-        return cliente.get();
-
+        return producto.get();
     }
 
     @Override
-    public List<Cliente> list() throws BusinessException {
+    public List<Producto> list() throws BusinessException {
         try {
-            return clienteRepository.findAll();
-        } catch (Exception e) {
+            return productoRepository.findAll();
+        }catch (Exception e) {
             log.error(e.getMessage(), e);
             throw BusinessException.builder().ex(e).build();
         }
     }
 
     @Override
-    public Cliente add(Cliente cliente) throws BusinessException {
+    public Producto add(Producto producto) throws BusinessException {
         try {
-            load(cliente.getRazonSocial());
-            throw FoundException.builder().message("Se encontro el chofer con DNI: " + cliente.getRazonSocial()).build();
+            load(producto.getId());
+            throw FoundException.builder().message("Se encontro el producto con ID: " + producto.getId()).build();
         } catch (NotFoundException | FoundException | BusinessException e) {
         }
 
         try {
-            return clienteRepository.save(cliente);
-        } catch (Exception e) {
+            return productoRepository.save(producto);
+        }catch (Exception e) {
             log.error(e.getMessage(), e);
             throw BusinessException.builder().ex(e).build();
         }
 
     }
 }
-

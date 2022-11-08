@@ -7,6 +7,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "camion")
@@ -22,7 +23,7 @@ public class Camion implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long id_camion;
 
     @Column(unique = true)
     private String patente;
@@ -32,7 +33,7 @@ public class Camion implements Serializable {
 
 
     @OneToMany(mappedBy = "camion",fetch = FetchType.EAGER)
-    ArrayList<Cisternado> datosCisterna;
+    List<Cisternado> datosCisterna;
 
     @Column
     private long totalCisterna;

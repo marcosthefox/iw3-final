@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IClienteBusiness {
 
-    public Cliente load(long id) throws BusinessException, NotFoundException;
+    public Cliente load(Long rs) throws BusinessException, NotFoundException;
 
     public List<Cliente> list() throws BusinessException;
 
