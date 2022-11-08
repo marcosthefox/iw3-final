@@ -21,7 +21,7 @@ public class ClienteBusiness implements IClienteBusiness {
     private ClienteRepository clienteRepository;
 
     @Override
-    public Cliente load(Long rs) throws BusinessException, NotFoundException {
+    public Optional<Cliente> load(Long rs) throws BusinessException, NotFoundException {
         Optional<Cliente> cliente;
         try {
             cliente = clienteRepository.findById(rs);
@@ -34,7 +34,7 @@ public class ClienteBusiness implements IClienteBusiness {
             throw NotFoundException.builder().message("No se encontro el chofer con razon social: " + rs).build();
         }
 
-        return cliente.get();
+        return cliente;
 
     }
 

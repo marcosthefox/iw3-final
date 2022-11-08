@@ -6,9 +6,10 @@ import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IChoferBusiness {
-    Chofer load(long dniChofer) throws NotFoundException, BusinessException;
+    Optional<Chofer> load(long dniChofer) throws NotFoundException, BusinessException;
 
     List<Chofer> list() throws BusinessException;
 

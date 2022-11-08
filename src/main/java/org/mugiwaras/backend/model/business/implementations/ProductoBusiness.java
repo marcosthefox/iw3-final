@@ -21,7 +21,7 @@ public class ProductoBusiness implements IProductoBusiness {
     ProductoRepository productoRepository;
 
     @Override
-    public Producto load(long id) throws BusinessException, NotFoundException {
+    public Optional<Producto> load(long id) throws BusinessException, NotFoundException {
         Optional<Producto> producto;
         try {
             producto = productoRepository.findById(id);
@@ -34,7 +34,7 @@ public class ProductoBusiness implements IProductoBusiness {
             throw NotFoundException.builder().message("No se encontro el producto con ID: " + id).build();
         }
 
-        return producto.get();
+        return producto;
     }
 
     @Override

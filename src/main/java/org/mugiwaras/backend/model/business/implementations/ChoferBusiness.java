@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -22,8 +23,8 @@ public class ChoferBusiness implements IChoferBusiness {
 
 
     @Override
-    public Chofer load(long dniChofer) throws NotFoundException, BusinessException {
-        Chofer chofer;
+    public Optional<Chofer> load(long dniChofer) throws NotFoundException, BusinessException {
+        Optional<Chofer> chofer;
         try {
             chofer = choferRepository.findOneByDni(dniChofer);
         } catch (Exception e){

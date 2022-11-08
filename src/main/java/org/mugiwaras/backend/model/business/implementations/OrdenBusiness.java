@@ -1,8 +1,11 @@
 package org.mugiwaras.backend.model.business.implementations;
 
 import lombok.extern.slf4j.Slf4j;
+import org.mugiwaras.backend.model.Chofer;
+import org.mugiwaras.backend.model.Cisternado;
 import org.mugiwaras.backend.model.Orden;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
+import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
 import org.mugiwaras.backend.model.persistence.OrdenRepository;
@@ -19,8 +22,22 @@ public class OrdenBusiness implements IOrdenBusiness {
     @Autowired
     private OrdenRepository ordenRepository;
 
+    //Los utilizo para armar todo
+    @Autowired
+    private CamionBusiness camionBusiness;
+    @Autowired
+    private ChoferBusiness choferBusiness;
+    @Autowired
+    private CisternadoBusiness cisternadoBusiness;
+    @Autowired
+    private ClienteBusiness clienteBusiness;
+    @Autowired
+    private ProductoBusiness productoBusiness;
+
+
+
     @Override
-    public Orden load(long numeroOrden) throws BusinessException, NotFoundException  {
+    public Optional<Orden> load(long numeroOrden) throws BusinessException, NotFoundException  {
         Optional<Orden> r;
         try {
             r= ordenRepository.findByNumeroOrden(numeroOrden);
@@ -29,9 +46,9 @@ public class OrdenBusiness implements IOrdenBusiness {
             throw BusinessException.builder().ex(e).build();
         }
         if(r.isEmpty()) {
-            throw NotFoundException.builder().message("No se encuentra la orden con id=" + numeroOrden).build();
+          throw NotFoundException.builder().message("No se encuentra la orden con id=" + numeroOrden).build();
         }
-        return r.get();
+        return r;
     }
 
     @Override
@@ -48,12 +65,29 @@ public class OrdenBusiness implements IOrdenBusiness {
     public void add(Orden orden) throws BusinessException{
         try {
             load(orden.getNumeroOrden());
-           
-            throw NotFoundException.builder().message("Ya hay una orden con el nro =" + orden.getNumeroOrden()).build();
-        } catch (NotFoundException e) {
+            throw FoundException.builder().message("Ya hay una orden con el nro =" + orden.getNumeroOrden()).build();
+        } catch (FoundException | NotFoundException e) {
         } catch (BusinessException e) {
             throw new RuntimeException(e);
         }
+        //camion
+        try {
+            camionBusiness.add(orden.getCamion());
+            productoBusiness.add(orden.getProducto());
+            clienteBusiness.add(orden.getCliente());
+            /*for(Cisternado cisternado : orden.getCamion().getDatosCisterna()){
+                cisternadoBusiness.add(cisternado);
+            }*/
+            choferBusiness.add(orden.getChofer());
+
+        } catch (FoundException e) {
+            throw new RuntimeException(e);
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
         try {
             ordenRepository.save(orden);
         } catch (Exception e) {

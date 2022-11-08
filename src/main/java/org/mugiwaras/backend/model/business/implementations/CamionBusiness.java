@@ -21,18 +21,17 @@ public class CamionBusiness implements ICamionBusiness {
     private CamionRepository camionRepository;
 
     @Override
-    public Camion load(long id) throws NotFoundException, BusinessException {
+    public Optional<Camion> load(long id) throws NotFoundException, BusinessException {
         Optional<Camion> camion;
         try {
             camion = camionRepository.findById(id);
         } catch (Exception e) {
                 throw BusinessException.builder().ex(e).build();
-            }
-            if (camion.isEmpty()) {
-                throw NotFoundException.builder().message("No se encuentra " + id).build();
-            }
-
-            return camion.get();
+        }
+        if (camion.isEmpty()) {
+            throw NotFoundException.builder().message("No se encuentra " + id).build();
+        }
+            return camion;
         }
 
     @Override
@@ -41,8 +40,13 @@ public class CamionBusiness implements ICamionBusiness {
     }
 
     @Override
-    public Camion add(Camion camion) throws FoundException, BusinessException {
-        //TODO: ver el caso de si ya existe.
+    public Camion add(Camion camion) throws FoundException, BusinessException, NotFoundException {
+        try{
+            load(camion.getId_camion());
+            throw FoundException.builder().message("se encontro el camion con ID: " + camion.getId_camion()).build();
+        }catch (NotFoundException e){
+        }
+
         try {
             return camionRepository.save(camion);
         } catch (Exception e){

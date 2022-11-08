@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface IProductoBusiness {
 
-    public Producto load(long id) throws BusinessException, NotFoundException;
+    public Optional<Producto> load(long id) throws BusinessException, NotFoundException;
 
     public List<Producto> list() throws BusinessException;
 
