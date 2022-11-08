@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ICamionBusiness {
 
-    Camion load(long idCamion) throws NotFoundException, BusinessException;
+    Camion load(long id) throws NotFoundException, BusinessException;
 
     List<Camion> list() throws BusinessException;
 
