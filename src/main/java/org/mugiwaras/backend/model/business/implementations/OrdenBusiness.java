@@ -80,7 +80,7 @@ public class OrdenBusiness implements IOrdenBusiness {
             choferBusiness.add(orden.getChofer());
             clienteBusiness.add(orden.getCliente());
             productoBusiness.add(orden.getProducto());
-
+            orden.setEstado(1);
             ordenRepository.save(orden);
         } catch (Exception e) {
             throw BusinessException.builder().message("Error cracion de la orden").build();
