@@ -10,7 +10,6 @@ import org.mugiwaras.backend.model.persistence.ChoferRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,27 +22,26 @@ public class ChoferBusiness implements IChoferBusiness {
 
 
     @Override
-    public Optional<Chofer> load(long dniChofer) throws NotFoundException, BusinessException {
+    public Chofer load(long dniChofer) throws NotFoundException, BusinessException {
         Optional<Chofer> chofer;
         try {
             chofer = choferRepository.findOneByDni(dniChofer);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw BusinessException.builder().ex(e).build();
         }
 
-        if(chofer.equals(null)){
-            throw NotFoundException.builder().message("No se encontro el chofer con DNI: " + dniChofer ).build();
+        if (chofer.isEmpty()) {
+            throw NotFoundException.builder().message("No se encontro el chofer con DNI: " + dniChofer).build();
         }
-
-        return chofer;
+        return chofer.get();
     }
 
     @Override
     public List<Chofer> list() throws BusinessException {
         try {
             return choferRepository.findAll();
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw BusinessException.builder().ex(e).build();
         }
@@ -51,19 +49,21 @@ public class ChoferBusiness implements IChoferBusiness {
     }
 
     @Override
-    public Chofer add(Chofer chofer) throws FoundException, BusinessException {
+    public Chofer add(Chofer chofer) throws FoundException, BusinessException, NotFoundException {
         try {
-            load(chofer.getDni());
-            throw FoundException.builder().message("Se encontro el chofer con DNI: " + chofer.getDni()).build();
-        } catch (NotFoundException e) {}
-
+            Chofer r = load(chofer.getDni());
+            if(!r.equals(null)){
+                return r;
+            }
+//            throw FoundException.builder().message("Ya hay un chofer con DNI: " + chofer.getDni()).build();
+        } catch (NotFoundException e) {
+        }
         try {
             return choferRepository.save(chofer);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw BusinessException.builder().ex(e).build();
+            throw BusinessException.builder().message("Error de creacion de chofer").build();
         }
-
     }
 }
 //El update no iria, pq no podriamos modificar ninguno.

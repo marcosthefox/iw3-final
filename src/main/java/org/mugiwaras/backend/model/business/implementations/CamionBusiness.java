@@ -17,22 +17,27 @@ import java.util.Optional;
 @Slf4j
 public class CamionBusiness implements ICamionBusiness {
 
-    @Autowired(required = false)
+    @Autowired
     private CamionRepository camionRepository;
 
     @Override
-    public Optional<Camion> load(long id) throws NotFoundException, BusinessException {
+    public Camion load(String patente) throws NotFoundException, BusinessException {
         Optional<Camion> camion;
         try {
-            camion = camionRepository.findById(id);
+            camion = camionRepository.findByPatente(patente);
         } catch (Exception e) {
-                throw BusinessException.builder().ex(e).build();
+            throw BusinessException.builder().ex(e).build();
         }
         if (camion.isEmpty()) {
-            throw NotFoundException.builder().message("No se encuentra " + id).build();
+            throw NotFoundException.builder().message("No se encuentra el camion " + patente).build();
         }
-            return camion;
-        }
+        return camion.get();
+    }
+
+    @Override
+    public Boolean exists(String patente) throws NotFoundException, BusinessException, FoundException {
+        return camionRepository.existsByPatente(patente);
+    }
 
     @Override
     public List<Camion> list() throws BusinessException {
@@ -41,16 +46,19 @@ public class CamionBusiness implements ICamionBusiness {
 
     @Override
     public Camion add(Camion camion) throws FoundException, BusinessException, NotFoundException {
-        try{
-            load(camion.getId_camion());
-            throw FoundException.builder().message("se encontro el camion con ID: " + camion.getId_camion()).build();
-        }catch (NotFoundException e){
+        try {
+            Camion r = load(camion.getPatente());
+            //TODO: usar el exist del repository en vez del equals
+            if (!r.equals(null)) {
+                return r;
+            }
+//            throw FoundException.builder().message("Ya hay un camion con ID: " + camion.getId_camion()).build();
+        } catch (NotFoundException e) {
         }
-
         try {
             return camionRepository.save(camion);
-        } catch (Exception e){
-            throw BusinessException.builder().ex(e).build();
+        } catch (Exception e) {
+            throw BusinessException.builder().message("Error creacion de camion").build();
         }
     }
 }

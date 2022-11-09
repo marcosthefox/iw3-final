@@ -15,20 +15,19 @@ import java.util.List;
 public class CisternadoBusiness implements ICisternadoBusiness {
 
 
-    @Autowired
+    @Autowired(required = false)
     private CisternadoRepository cisternadoRepository;
 
     @Override
     public List<Cisternado> list(long idCamion) {
-
         return cisternadoRepository.findAllById_IdCamion(idCamion);
     }
 
     @Override
-    public void add(Cisternado cisternado) throws BusinessException{
-        try{
+    public void add(Cisternado cisternado) throws BusinessException {
+        try {
             cisternadoRepository.save(cisternado);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw BusinessException.builder().ex(e).build();
         }
     }

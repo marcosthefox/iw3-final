@@ -21,7 +21,7 @@ public class ClienteBusiness implements IClienteBusiness {
     private ClienteRepository clienteRepository;
 
     @Override
-    public Optional<Cliente> load(Long rs) throws BusinessException, NotFoundException {
+    public Cliente load(long rs) throws BusinessException, NotFoundException {
         Optional<Cliente> cliente;
         try {
             cliente = clienteRepository.findById(rs);
@@ -30,11 +30,11 @@ public class ClienteBusiness implements IClienteBusiness {
             throw BusinessException.builder().ex(e).build();
         }
 
-        if (cliente.equals(null)) {
+        if (cliente.isEmpty()) {
             throw NotFoundException.builder().message("No se encontro el chofer con razon social: " + rs).build();
         }
 
-        return cliente;
+        return cliente.get();
 
     }
 
@@ -49,18 +49,20 @@ public class ClienteBusiness implements IClienteBusiness {
     }
 
     @Override
-    public Cliente add(Cliente cliente) throws BusinessException {
+    public Cliente add(Cliente cliente) throws FoundException, BusinessException, NotFoundException {
         try {
-            load(cliente.getRazonSocial());
-            throw FoundException.builder().message("Se encontro el chofer con DNI: " + cliente.getRazonSocial()).build();
-        } catch (NotFoundException | FoundException | BusinessException e) {
+            Cliente r = load(cliente.getRazonSocial());
+            if (!r.equals(null)) {
+                return r;
+            }
+//            throw FoundException.builder().message("Se encontro el chofer con DNI: " + cliente.getRazonSocial()).build();
+        } catch (NotFoundException e) {
         }
-
         try {
             return clienteRepository.save(cliente);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw BusinessException.builder().ex(e).build();
+            throw BusinessException.builder().message("Error crecion de cliente").build();
         }
 
     }

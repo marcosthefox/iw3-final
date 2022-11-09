@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IChoferBusiness {
-    Optional<Chofer> load(long dniChofer) throws NotFoundException, BusinessException;
+    Chofer load(long dniChofer) throws NotFoundException, BusinessException;
 
     List<Chofer> list() throws BusinessException;
 
-    Chofer add(Chofer chofer) throws FoundException, BusinessException;
+    Chofer add(Chofer chofer) throws FoundException, BusinessException, NotFoundException;
 }

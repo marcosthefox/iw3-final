@@ -21,7 +21,7 @@ public class ProductoBusiness implements IProductoBusiness {
     ProductoRepository productoRepository;
 
     @Override
-    public Optional<Producto> load(long id) throws BusinessException, NotFoundException {
+    public Producto load(long id) throws BusinessException, NotFoundException {
         Optional<Producto> producto;
         try {
             producto = productoRepository.findById(id);
@@ -29,37 +29,37 @@ public class ProductoBusiness implements IProductoBusiness {
             log.error(e.getMessage(), e);
             throw BusinessException.builder().ex(e).build();
         }
-
-        if(producto.isEmpty()){
+        if (producto.isEmpty()) {
             throw NotFoundException.builder().message("No se encontro el producto con ID: " + id).build();
         }
-
-        return producto;
+        return producto.get();
     }
 
     @Override
     public List<Producto> list() throws BusinessException {
         try {
             return productoRepository.findAll();
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw BusinessException.builder().ex(e).build();
         }
     }
 
     @Override
-    public Producto add(Producto producto) throws BusinessException {
+    public Producto add(Producto producto) throws BusinessException, FoundException, NotFoundException {
         try {
-            load(producto.getId());
-            throw FoundException.builder().message("Se encontro el producto con ID: " + producto.getId()).build();
-        } catch (NotFoundException | FoundException | BusinessException e) {
+            Producto r = load(producto.getId());
+            if (!r.equals(null)) {
+                return r;
+            }
+//            throw FoundException.builder().message("Ya hay un producto con ID: " + producto.getId()).build();
+        } catch (NotFoundException e) {
         }
-
         try {
             return productoRepository.save(producto);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw BusinessException.builder().ex(e).build();
+            throw BusinessException.builder().message("Error creacion de producto").build();
         }
 
     }

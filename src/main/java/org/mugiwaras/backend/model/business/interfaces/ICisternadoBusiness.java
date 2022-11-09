@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface ICisternadoBusiness {
 
-    public List<Cisternado> list(long idCamion);
+
+    List<Cisternado> list(long idCamion);
 
     void add(Cisternado cisternado) throws BusinessException;
 

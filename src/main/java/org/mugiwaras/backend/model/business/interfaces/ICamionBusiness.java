@@ -6,11 +6,12 @@ import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ICamionBusiness {
 
-    Optional<Camion> load(long id) throws NotFoundException, BusinessException, FoundException;
+    Camion load(String patente) throws NotFoundException, BusinessException, FoundException;
+
+    Boolean exists(String patente) throws NotFoundException, BusinessException, FoundException;
 
     List<Camion> list() throws BusinessException;
 
