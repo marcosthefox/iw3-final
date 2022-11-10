@@ -2,8 +2,10 @@ package org.mugiwaras.backend.model.business.implementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Or;
 import org.mugiwaras.backend.model.Cisternado;
 import org.mugiwaras.backend.model.Orden;
+import org.mugiwaras.backend.model.business.PasswordGenerator;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
@@ -87,4 +89,22 @@ public class OrdenBusiness implements IOrdenBusiness {
         }
 
     }
+
+    @Override
+    public Orden checkIn(Orden ordenNew) throws NotFoundException {
+        Optional<Orden> orden;
+        try{
+            orden = ordenRepository.findByNumeroOrden(ordenNew.getNumeroOrden());
+        }catch (Exception e){
+            throw NotFoundException.builder().message("No se encontro la orden con numero: " + ordenNew.getNumeroOrden()).build();
+        }
+        orden.get().setTara(ordenNew.getTara());
+        orden.get().setPassword(PasswordGenerator.generateFiveDigitPassword());
+        orden.get().setEstado(2);
+        return ordenRepository.save(orden.get());
+
+    }
+
+
+
 }

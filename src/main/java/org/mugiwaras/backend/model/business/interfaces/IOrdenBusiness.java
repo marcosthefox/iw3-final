@@ -10,10 +10,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IOrdenBusiness {
-    public Orden load(long numeroOrden) throws BusinessException, NotFoundException;
+    Orden load(long numeroOrden) throws BusinessException, NotFoundException;
 
-    public List<Orden> list() throws BusinessException;
+    List<Orden> list() throws BusinessException;
 
     void add(Orden orden) throws BusinessException, FoundException, NotFoundException;
+
+    Orden checkIn(Orden orden) throws NotFoundException;
+
+
 
 }

@@ -22,8 +22,7 @@ public class OrdenController extends BaseRestController {
     @SneakyThrows
     @GetMapping(value = "",  produces= MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> load(Long id){
-        return new ResponseEntity<>(
-                ordenBusiness.load(id), HttpStatus.OK);
+        return new ResponseEntity<>(ordenBusiness.load(id), HttpStatus.OK);
     }
 
     @SneakyThrows
@@ -32,5 +31,11 @@ public class OrdenController extends BaseRestController {
         ordenBusiness.add(orden);
         String response = "Se creo la orden bro segui asi";
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @SneakyThrows
+    @PutMapping(value = "/checkin", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> checkIn(@RequestBody Orden orden){
+        return new ResponseEntity<>(ordenBusiness.checkIn(orden), HttpStatus.CREATED);
     }
 }

@@ -48,6 +48,12 @@ public class Orden implements Serializable {
     @Column(name = "estado")
     private int estado;
 
+    @Column(name = "tara")
+    private long tara;
+
+    @Column(name = "password")
+    private long password;
+
 
 
 }
