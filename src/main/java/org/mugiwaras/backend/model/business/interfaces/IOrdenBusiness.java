@@ -14,7 +14,7 @@ public interface IOrdenBusiness {
 
     List<Orden> list() throws BusinessException;
 
-    void add(Orden orden) throws BusinessException, FoundException, NotFoundException;
+    Orden add(Orden orden) throws BusinessException, FoundException, NotFoundException;
 
     Orden checkIn(Orden orden) throws NotFoundException;
 

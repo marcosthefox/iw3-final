@@ -35,7 +35,7 @@ public class CamionBusiness implements ICamionBusiness {
     }
 
     @Override
-    public Boolean exists(String patente) throws NotFoundException, BusinessException, FoundException {
+    public Boolean exists(String patente) {
         return camionRepository.existsByPatente(patente);
     }
 
@@ -47,12 +47,9 @@ public class CamionBusiness implements ICamionBusiness {
     @Override
     public Camion add(Camion camion) throws FoundException, BusinessException, NotFoundException {
         try {
-            Camion r = load(camion.getPatente());
-            //TODO: usar el exist del repository en vez del equals
-            if (!r.equals(null)) {
-                return r;
+            if (camionRepository.existsByPatente(camion.getPatente())) {
+                return load(camion.getPatente());
             }
-//            throw FoundException.builder().message("Ya hay un camion con ID: " + camion.getId_camion()).build();
         } catch (NotFoundException e) {
         }
         try {

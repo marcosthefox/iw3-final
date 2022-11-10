@@ -48,11 +48,9 @@ public class ProductoBusiness implements IProductoBusiness {
     @Override
     public Producto add(Producto producto) throws BusinessException, FoundException, NotFoundException {
         try {
-            Producto r = load(producto.getId());
-            if (!r.equals(null)) {
-                return r;
+            if (productoRepository.existsById(producto.getId())) {
+                return load(producto.getId());
             }
-//            throw FoundException.builder().message("Ya hay un producto con ID: " + producto.getId()).build();
         } catch (NotFoundException e) {
         }
         try {

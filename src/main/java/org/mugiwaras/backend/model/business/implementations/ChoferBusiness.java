@@ -51,11 +51,9 @@ public class ChoferBusiness implements IChoferBusiness {
     @Override
     public Chofer add(Chofer chofer) throws FoundException, BusinessException, NotFoundException {
         try {
-            Chofer r = load(chofer.getDni());
-            if(!r.equals(null)){
-                return r;
+            if (choferRepository.existsById(chofer.getDni())) {
+                return load(chofer.getDni());
             }
-//            throw FoundException.builder().message("Ya hay un chofer con DNI: " + chofer.getDni()).build();
         } catch (NotFoundException e) {
         }
         try {

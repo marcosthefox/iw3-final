@@ -51,11 +51,9 @@ public class ClienteBusiness implements IClienteBusiness {
     @Override
     public Cliente add(Cliente cliente) throws FoundException, BusinessException, NotFoundException {
         try {
-            Cliente r = load(cliente.getRazonSocial());
-            if (!r.equals(null)) {
-                return r;
+            if (clienteRepository.existsById(cliente.getRazonSocial())) {
+                return load(cliente.getRazonSocial());
             }
-//            throw FoundException.builder().message("Se encontro el chofer con DNI: " + cliente.getRazonSocial()).build();
         } catch (NotFoundException e) {
         }
         try {

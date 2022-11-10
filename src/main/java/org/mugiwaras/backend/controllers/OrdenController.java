@@ -1,11 +1,14 @@
 package org.mugiwaras.backend.controllers;
 
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.SneakyThrows;
 import org.mugiwaras.backend.controllers.constants.Constants;
 import org.mugiwaras.backend.model.Camion;
 import org.mugiwaras.backend.model.Orden;
 import org.mugiwaras.backend.model.business.interfaces.ICamionBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
+import org.mugiwaras.backend.model.serializer.OrdenJsonSerializer;
+import org.mugiwaras.backend.util.JsonUtiles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,11 +29,11 @@ public class OrdenController extends BaseRestController {
     }
 
     @SneakyThrows
-    @PostMapping(value = "/inicio")
+    @PostMapping(value = "/inicio", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody Orden orden){
-        ordenBusiness.add(orden);
-        String response = "Se creo la orden bro segui asi";
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        StdSerializer<Orden> ser = new OrdenJsonSerializer(Orden.class, false);
+        String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.add(orden));
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @SneakyThrows

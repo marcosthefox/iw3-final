@@ -55,7 +55,7 @@ public class OrdenBusiness implements IOrdenBusiness {
     }
 
     @Override
-    public void add(Orden orden) throws BusinessException, FoundException, NotFoundException {
+    public Orden add(Orden orden) throws BusinessException, FoundException, NotFoundException {
         try {
             load(orden.getNumeroOrden());
             throw FoundException.builder().message("Ya hay una orden con el nro =" + orden.getNumeroOrden()).build();
@@ -81,7 +81,7 @@ public class OrdenBusiness implements IOrdenBusiness {
             productoBusiness.add(orden.getProducto());
             orden.setEstado(1);
 
-            ordenRepository.save(orden);
+            return ordenRepository.save(orden);
         } catch (Exception e) {
             throw BusinessException.builder().message("Error cracion de la orden").build();
         }
