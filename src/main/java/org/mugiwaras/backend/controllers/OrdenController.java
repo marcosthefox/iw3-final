@@ -36,6 +36,6 @@ public class OrdenController extends BaseRestController {
     @SneakyThrows
     @PutMapping(value = "/checkin", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> checkIn(@RequestBody Orden orden){
-        return new ResponseEntity<>(ordenBusiness.checkIn(orden), HttpStatus.CREATED);
+        return new ResponseEntity<>(ordenBusiness.checkIn(orden), HttpStatus.OK);
     }
 }

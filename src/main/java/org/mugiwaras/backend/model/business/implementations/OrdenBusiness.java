@@ -2,7 +2,7 @@ package org.mugiwaras.backend.model.business.implementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Or;
+import org.mugiwaras.backend.model.Camion;
 import org.mugiwaras.backend.model.Cisternado;
 import org.mugiwaras.backend.model.Orden;
 import org.mugiwaras.backend.model.business.PasswordGenerator;
@@ -61,28 +61,26 @@ public class OrdenBusiness implements IOrdenBusiness {
             throw FoundException.builder().message("Ya hay una orden con el nro =" + orden.getNumeroOrden()).build();
         } catch (NotFoundException e) {
         }
+        Camion camion;
         try {
-
             if (!camionBusiness.exists(orden.getCamion().getPatente())) {
-                // esto se ejecuta cuando el camion es nuevo
+                // cuando el camion es nuevo
                 camionBusiness.add(orden.getCamion());
                 for (Cisternado cisternado : orden.getCamion().getDatosCisterna()) {
                     cisternado.setCamion(orden.getCamion());
                     cisternadoBusiness.add(cisternado);
                 }
             } else {
-                // camion q ya existe con cisterna q tambien existe
-                camionBusiness.add(orden.getCamion());
-                List<Cisternado> cisternadoList = cisternadoBusiness.list(orden.getCamion().getId_camion());
-                for (Cisternado cisternado : cisternadoList) {
-                    cisternadoBusiness.add(cisternado);
-                }
+                // camion q ya existe
+                camion = camionBusiness.add(orden.getCamion());
+                orden.setCamion(camion);
             }
 
             choferBusiness.add(orden.getChofer());
             clienteBusiness.add(orden.getCliente());
             productoBusiness.add(orden.getProducto());
             orden.setEstado(1);
+
             ordenRepository.save(orden);
         } catch (Exception e) {
             throw BusinessException.builder().message("Error cracion de la orden").build();
@@ -93,9 +91,9 @@ public class OrdenBusiness implements IOrdenBusiness {
     @Override
     public Orden checkIn(Orden ordenNew) throws NotFoundException {
         Optional<Orden> orden;
-        try{
+        try {
             orden = ordenRepository.findByNumeroOrden(ordenNew.getNumeroOrden());
-        }catch (Exception e){
+        } catch (Exception e) {
             throw NotFoundException.builder().message("No se encontro la orden con numero: " + ordenNew.getNumeroOrden()).build();
         }
         orden.get().setTara(ordenNew.getTara());
@@ -104,7 +102,6 @@ public class OrdenBusiness implements IOrdenBusiness {
         return ordenRepository.save(orden.get());
 
     }
-
 
 
 }
