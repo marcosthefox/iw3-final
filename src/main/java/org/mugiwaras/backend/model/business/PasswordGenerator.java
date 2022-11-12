@@ -8,6 +8,8 @@ public class PasswordGenerator {
 
     public static long generateFiveDigitPassword(){
         SecureRandom random = new SecureRandom();
-        return random.nextInt(100000) + 9999;
+        final int max = 100000;
+        final int min = 9999;
+        return random.nextInt(max - min) + min;
     }
 }

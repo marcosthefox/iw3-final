@@ -1,5 +1,7 @@
 package org.mugiwaras.backend.model.business.implementations;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mugiwaras.backend.model.Camion;
@@ -10,7 +12,9 @@ import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
+import org.mugiwaras.backend.model.deserealizer.CheckInDeserealizer;
 import org.mugiwaras.backend.model.persistence.OrdenRepository;
+import org.mugiwaras.backend.util.JsonUtiles;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -89,18 +93,24 @@ public class OrdenBusiness implements IOrdenBusiness {
     }
 
     @Override
-    public Orden checkIn(Orden ordenNew) throws NotFoundException {
-        Optional<Orden> orden;
+    public Orden checkIn(String json, long numeroOrden) throws NotFoundException, BusinessException {
+        ObjectMapper mapper = JsonUtiles.getObjectMapper(Orden.class, new CheckInDeserealizer(Orden.class));
+        Orden ordenNew;
         try {
-            orden = ordenRepository.findByNumeroOrden(ordenNew.getNumeroOrden());
-        } catch (Exception e) {
-            throw NotFoundException.builder().message("No se encontro la orden con numero: " + ordenNew.getNumeroOrden()).build();
+            ordenNew = mapper.readValue(json, Orden.class);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            throw BusinessException.builder().ex(e).build();
         }
-        orden.get().setTara(ordenNew.getTara());
-        orden.get().setPassword(PasswordGenerator.generateFiveDigitPassword());
-        orden.get().setEstado(2);
-        return ordenRepository.save(orden.get());
 
+        Orden orden = null;
+        try {
+            orden = load(numeroOrden);
+        } catch (Exception e){}
+
+        orden.setTara(ordenNew.getTara());
+        orden.setPassword(PasswordGenerator.generateFiveDigitPassword());
+        return ordenRepository.save(orden);
     }
 
 
