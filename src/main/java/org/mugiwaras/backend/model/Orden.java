@@ -1,6 +1,8 @@
 package org.mugiwaras.backend.model;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -36,6 +38,7 @@ public class Orden implements Serializable {
     private Producto producto;
 
     @OneToMany(mappedBy = "orden",fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<Detalle> detalle;
 
     //VER FECHAS!!!!

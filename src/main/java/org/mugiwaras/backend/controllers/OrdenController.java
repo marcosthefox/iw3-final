@@ -54,7 +54,7 @@ public class OrdenController extends BaseRestController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @SneakyThrows
-    @PutMapping
+    @PutMapping(value = "/detalle", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?>detalles(@RequestBody Detalle detalle, @RequestHeader long numeroOrden,@RequestHeader int password){
        try {
          return new ResponseEntity<>(detalleBusiness.add(detalle,numeroOrden,password),HttpStatus.CREATED);
