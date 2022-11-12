@@ -1,5 +1,6 @@
 package org.mugiwaras.backend.model.business.implementations;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mugiwaras.backend.model.Camion;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
@@ -15,10 +16,11 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CamionBusiness implements ICamionBusiness {
 
-    @Autowired
-    private CamionRepository camionRepository;
+
+    private final CamionRepository camionRepository;
 
     @Override
     public Camion load(String patente) throws NotFoundException, BusinessException {

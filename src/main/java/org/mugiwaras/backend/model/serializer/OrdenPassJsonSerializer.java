@@ -18,6 +18,7 @@ public class OrdenPassJsonSerializer extends StdSerializer<Orden> {
         gen.writeStartObject();
 
         gen.writeNumberField("password", value.getPassword());
+        gen.writeStringField("fechaPesajeInicial", value.getFechaPesajeInicial().toString());
 
         gen.writeEndObject();
     }

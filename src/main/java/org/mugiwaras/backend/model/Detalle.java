@@ -17,12 +17,15 @@ import java.time.OffsetDateTime;
 @Builder
 public class Detalle implements Serializable {
 
+
+    private static final long serialVersionUID = 4501343898075848117L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_orden")
+    @JoinColumn(name = "numero_orden")
     @JsonIgnore
     private Orden orden;
 

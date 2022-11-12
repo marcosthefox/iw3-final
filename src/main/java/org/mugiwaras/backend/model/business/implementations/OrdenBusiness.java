@@ -17,6 +17,7 @@ import org.mugiwaras.backend.model.persistence.OrdenRepository;
 import org.mugiwaras.backend.util.JsonUtiles;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,12 +107,26 @@ public class OrdenBusiness implements IOrdenBusiness {
         Orden orden = null;
         try {
             orden = load(numeroOrden);
-        } catch (Exception e){}
+        } catch (Exception e) {
+        }
 
         orden.setTara(ordenNew.getTara());
+        orden.setFechaPesajeInicial(OffsetDateTime.now());
         orden.setPassword(PasswordGenerator.generateFiveDigitPassword());
+        orden.setEstado(2);
         return ordenRepository.save(orden);
     }
 
+    @Override
+    public Orden closeOrder(long numeroOrden) throws NotFoundException, BusinessException {
+        Orden orden = new Orden();
+        try {
+            orden = load(numeroOrden);
+        } catch (Exception e) {
+        }
+        orden.setEstado(3);
+        // asigna alguna fecha a la orden??
+        return ordenRepository.save(orden);
+    }
 
 }

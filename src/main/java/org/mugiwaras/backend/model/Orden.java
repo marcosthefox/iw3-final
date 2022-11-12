@@ -48,6 +48,9 @@ public class Orden implements Serializable {
     @Column(name = "fecha_turno_carga")
     private OffsetDateTime fechaTurnoCarga;
 
+    @Column(name = "fecha_pesaje_inicial")
+    private OffsetDateTime fechaPesajeInicial;
+
     @Column(name = "estado")
     private int estado;
 

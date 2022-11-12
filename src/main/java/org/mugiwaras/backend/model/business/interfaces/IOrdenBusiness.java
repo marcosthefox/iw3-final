@@ -18,4 +18,6 @@ public interface IOrdenBusiness {
 
 
     Orden checkIn(String json, long numeroOrden) throws NotFoundException, BusinessException;
+
+    Orden closeOrder(long numeroOrden) throws NotFoundException, BusinessException;
 }
