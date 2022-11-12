@@ -7,6 +7,8 @@ import org.mugiwaras.backend.controllers.constants.Constants;
 import org.mugiwaras.backend.model.Camion;
 import org.mugiwaras.backend.model.Detalle;
 import org.mugiwaras.backend.model.Orden;
+import org.mugiwaras.backend.model.business.exceptions.BusinessException;
+import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.interfaces.ICamionBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IDetalleBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
@@ -54,17 +56,15 @@ public class OrdenController extends BaseRestController {
     @SneakyThrows
     @PutMapping
     public ResponseEntity<?>detalles(@RequestBody Detalle detalle, @RequestHeader long numeroOrden,@RequestHeader int password){
-        Orden orden=ordenBusiness.load(numeroOrden);
-        if(orden==null){
-            return new ResponseEntity<>("Orden no encontrada.",HttpStatus.NOT_FOUND);
-        }
-        if(orden.getEstado()==3){
-            return new ResponseEntity<>("Orden Cerrada.",HttpStatus.CONFLICT);
-        }
-        if(orden.getPassword() == password){
-            return new ResponseEntity<>(detalleBusiness.add(detalle),HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>("La Password es incorrecta.", HttpStatus.UNAUTHORIZED);
+       try {
+         return new ResponseEntity<>(detalleBusiness.add(detalle,numeroOrden,password),HttpStatus.CREATED);
+       }catch (BusinessException e){
+           return new ResponseEntity<>(e.getMessage(),HttpStatus.UNAUTHORIZED);
+       }catch (FoundException e){
+           return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+       }
+
+
     }
 
 }

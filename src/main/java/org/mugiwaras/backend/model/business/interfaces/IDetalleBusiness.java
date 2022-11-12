@@ -14,5 +14,5 @@ public interface IDetalleBusiness {
     @Nullable
     public List<Detalle> list() throws BusinessException;
 
-    Detalle add(Detalle detalle) throws FoundException, BusinessException;
+    Detalle add(Detalle detalle,long numeroOrden,int password) throws FoundException, BusinessException;
 }

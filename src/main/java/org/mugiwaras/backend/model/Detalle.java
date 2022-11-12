@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "detalle")
@@ -36,5 +37,8 @@ public class Detalle implements Serializable {
 
     @Column(name = "caudal")
     private float caudal;
+
+    @Column(name="fecha_detalle")
+    private OffsetDateTime fechaDetalle;
 
 }
