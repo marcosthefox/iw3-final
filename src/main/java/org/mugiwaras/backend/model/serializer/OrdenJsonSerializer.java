@@ -48,7 +48,7 @@ public class OrdenJsonSerializer extends StdSerializer<Orden> {
 
         gen.writeNumberField("preset", value.getPreset());
         gen.writeStringField("fechaTurnoCarga", value.getFechaTurnoCarga().toString());
-        gen.writeNumberField("estado", value.getEstado());
+        //gen.writeNumberField("estado", value.getEstado());
         gen.writeEndObject();
     }
 }

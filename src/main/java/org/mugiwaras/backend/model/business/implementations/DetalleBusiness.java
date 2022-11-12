@@ -78,9 +78,16 @@ public class DetalleBusiness implements IDetalleBusiness {
             throw BusinessException.builder().message("Password Incorrecta").build();
         }
         try {
-            //Asignamos la fecha de detalle y la orden
-            detalle.setFechaDetalle(OffsetDateTime.now());
-            detalle.setOrden(orden.get());
+            if(!detalleRepository.existsDetalleByOrden_numeroOrden(numeroOrden)){
+                orden.get().setFechaDetalleInicial(OffsetDateTime.now());
+            }
+            if(detalle.getMasa() <= orden.get().getPreset()){
+                orden.get().setFechaDetalleFinal(OffsetDateTime.now());
+                //Asignamos la fecha de detalle y la orden
+                detalle.setFechaDetalle(OffsetDateTime.now());
+                detalle.setOrden(orden.get());
+            }
+
             return detalleRepository.save(detalle);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

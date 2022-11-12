@@ -11,5 +11,7 @@ public interface DetalleRepository extends JpaRepository<Detalle, Long> {
 
     @Query(value = "select * from detalle where numero_orden = ?", nativeQuery = true)
     List<Detalle> findAllById_NumeroOrden(long numeroOrden);
+
+    Boolean existsDetalleByOrden_numeroOrden(long numeroOrden);
 }
 

@@ -9,6 +9,7 @@ import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.interfaces.IDetalleBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
+import org.mugiwaras.backend.model.serializer.DetalleJsonSerializer;
 import org.mugiwaras.backend.model.serializer.OrdenCierreJsonSerializer;
 import org.mugiwaras.backend.model.serializer.OrdenJsonSerializer;
 import org.mugiwaras.backend.model.serializer.OrdenPassJsonSerializer;
@@ -55,14 +56,9 @@ public class OrdenController extends BaseRestController {
     public ResponseEntity<?> detalles(@RequestBody Detalle detalle,
                                       @RequestHeader(name = "Numero-Orden") long numeroOrden,
                                       @RequestHeader(name = "Password") int password) {
-        try {
-            return new ResponseEntity<>(detalleBusiness.add(detalle, numeroOrden, password), HttpStatus.CREATED);
-        } catch (BusinessException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
-        } catch (FoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-
+        StdSerializer<Detalle> ser = new DetalleJsonSerializer(Detalle.class, false);
+        String result = JsonUtiles.getObjectMapper(Detalle.class, ser, null).writeValueAsString(detalleBusiness.add(detalle, numeroOrden, password));
+        return new ResponseEntity<>(result, HttpStatus.CREATED); //ponelo lindo tony
 
     }
 

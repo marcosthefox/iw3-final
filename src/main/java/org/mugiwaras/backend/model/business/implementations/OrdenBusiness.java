@@ -56,6 +56,7 @@ public class OrdenBusiness implements IOrdenBusiness {
         } catch (Exception e){}
 
         orden.setPesajeFinal(ordenNew.getPesajeFinal());
+        orden.setFechaPesajeFinal(OffsetDateTime.now());
         orden.setEstado(4);
         ordenRepository.save(orden);
         StdSerializer<Orden> ser = new ConciliacionSerializer(Orden.class, detalleBusiness);
@@ -69,7 +70,7 @@ public class OrdenBusiness implements IOrdenBusiness {
             StdSerializer<Orden> ser = new ConciliacionSerializer(Orden.class, detalleBusiness);
             return JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(orden);
         }
-        return null;
+        return null; //HACELO BIEN TONY!
     }
 
 

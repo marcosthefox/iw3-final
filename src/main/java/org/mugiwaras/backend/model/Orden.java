@@ -64,5 +64,16 @@ public class Orden implements Serializable {
     private long pesajeFinal;
 
 
+    @Column(name = "fecha_pesaje_final")
+    private OffsetDateTime fechaPesajeFinal;
+
+    @Column(name = "fecha_detalle_final")
+    private OffsetDateTime fechaDetalleFinal;
+
+    @Column(name = "fecha_detalle_inicial")
+    private OffsetDateTime fechaDetalleInicial;
+
+
+
 
 }
