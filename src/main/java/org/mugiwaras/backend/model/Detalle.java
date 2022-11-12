@@ -1,6 +1,7 @@
 package org.mugiwaras.backend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,6 +19,11 @@ public class Detalle implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @ManyToOne
+    @JoinColumn(name = "id_orden")
+    @JsonIgnore
+    private Orden orden;
 
     @Column(name = "masa")
     private float masa;

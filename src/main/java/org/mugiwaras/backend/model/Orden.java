@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "orden")
@@ -34,9 +35,8 @@ public class Orden implements Serializable {
     @JoinColumn(name = "id_producto")
     private Producto producto;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_detalle")
-    private Detalle detalle;
+    @OneToMany(mappedBy = "orden",fetch = FetchType.EAGER)
+    private List<Detalle> detalle;
 
     //VER FECHAS!!!!
     @Column(name = "preset")

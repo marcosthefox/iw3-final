@@ -5,8 +5,10 @@ import lombok.SneakyThrows;
 import org.aspectj.weaver.ast.Or;
 import org.mugiwaras.backend.controllers.constants.Constants;
 import org.mugiwaras.backend.model.Camion;
+import org.mugiwaras.backend.model.Detalle;
 import org.mugiwaras.backend.model.Orden;
 import org.mugiwaras.backend.model.business.interfaces.ICamionBusiness;
+import org.mugiwaras.backend.model.business.interfaces.IDetalleBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
 import org.mugiwaras.backend.model.serializer.OrdenJsonSerializer;
 import org.mugiwaras.backend.model.serializer.OrdenPassJsonSerializer;
@@ -25,6 +27,8 @@ public class OrdenController extends BaseRestController {
 
     @Autowired
     private IOrdenBusiness ordenBusiness;
+    @Autowired
+    private IDetalleBusiness detalleBusiness;
 
     @SneakyThrows
     @GetMapping(value = "",  produces= MediaType.APPLICATION_JSON_VALUE)
@@ -47,4 +51,20 @@ public class OrdenController extends BaseRestController {
         String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.checkIn(tara, numeroOrden));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+    @SneakyThrows
+    @PutMapping
+    public ResponseEntity<?>detalles(@RequestBody Detalle detalle, @RequestHeader long numeroOrden,@RequestHeader int password){
+        Orden orden=ordenBusiness.load(numeroOrden);
+        if(orden==null){
+            return new ResponseEntity<>("Orden no encontrada.",HttpStatus.NOT_FOUND);
+        }
+        if(orden.getEstado()==3){
+            return new ResponseEntity<>("Orden Cerrada.",HttpStatus.CONFLICT);
+        }
+        if(orden.getPassword() == password){
+            return new ResponseEntity<>(detalleBusiness.add(detalle),HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>("La Password es incorrecta.", HttpStatus.UNAUTHORIZED);
+    }
+
 }
