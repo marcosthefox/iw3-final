@@ -74,4 +74,16 @@ public class OrdenController extends BaseRestController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @SneakyThrows
+    @PutMapping(value = "/checkout", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> checkOut(@RequestBody String pesajeFinal, @RequestHeader(name = "Numero-Orden") long numeroOrden){
+        return new ResponseEntity<>(ordenBusiness.checkOut(pesajeFinal, numeroOrden), HttpStatus.OK);
+    }
+
+    @SneakyThrows
+    @GetMapping (value = "/conciliacion", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> checkOut(@RequestHeader(name = "Numero-Orden") long numeroOrden){
+        return new ResponseEntity<>(ordenBusiness.conciliacion(numeroOrden), HttpStatus.OK);
+    }
+
 }

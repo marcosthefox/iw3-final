@@ -1,5 +1,6 @@
 package org.mugiwaras.backend.model.business.interfaces;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.mugiwaras.backend.model.Orden;
 import org.mugiwaras.backend.model.Producto;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
@@ -20,4 +21,8 @@ public interface IOrdenBusiness {
     Orden checkIn(String json, long numeroOrden) throws NotFoundException, BusinessException;
 
     Orden closeOrder(long numeroOrden) throws NotFoundException, BusinessException;
+
+    String checkOut(String json, long numeroOrden) throws NotFoundException, BusinessException, JsonProcessingException;
+
+    String conciliacion(long numeroOrden) throws NotFoundException, JsonProcessingException, BusinessException;
 }

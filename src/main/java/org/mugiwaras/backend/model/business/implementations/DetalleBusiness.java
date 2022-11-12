@@ -53,6 +53,18 @@ public class DetalleBusiness implements IDetalleBusiness {
     }
 
     @Override
+    public List<Detalle> listByNumeroOrden(long numeroOrden) throws BusinessException {
+        try {
+            return detalleRepository.findAllById_NumeroOrden(numeroOrden);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw BusinessException.builder().ex(e).build();
+        }
+    }
+
+
+
+    @Override
     public Detalle add(Detalle detalle, long numeroOrden, int password) throws FoundException, BusinessException, NotFoundException {
 
         Optional<Orden> orden = ordenRepository.findByNumeroOrden(numeroOrden);
@@ -74,6 +86,5 @@ public class DetalleBusiness implements IDetalleBusiness {
             log.error(e.getMessage(), e);
             throw BusinessException.builder().message("Error crecion de Detalle").build();
         }
-
     }
 }

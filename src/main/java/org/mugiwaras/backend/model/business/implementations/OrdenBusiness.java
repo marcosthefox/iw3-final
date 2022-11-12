@@ -1,7 +1,9 @@
 package org.mugiwaras.backend.model.business.implementations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mugiwaras.backend.model.Camion;
@@ -13,8 +15,12 @@ import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
 import org.mugiwaras.backend.model.deserealizer.CheckInDeserealizer;
+import org.mugiwaras.backend.model.deserealizer.CheckOutDesealizer;
+import org.mugiwaras.backend.model.persistence.DetalleRepository;
 import org.mugiwaras.backend.model.persistence.OrdenRepository;
+import org.mugiwaras.backend.model.serializer.ConciliacionSerializer;
 import org.mugiwaras.backend.util.JsonUtiles;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -26,12 +32,45 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrdenBusiness implements IOrdenBusiness {
 
+    private final DetalleBusiness detalleBusiness;
     private final OrdenRepository ordenRepository;
     private final CamionBusiness camionBusiness;
     private final ChoferBusiness choferBusiness;
     private final CisternadoBusiness cisternadoBusiness;
     private final ClienteBusiness clienteBusiness;
     private final ProductoBusiness productoBusiness;
+
+    @Override
+    public String checkOut(String json, long numeroOrden) throws NotFoundException, BusinessException, JsonProcessingException {
+        ObjectMapper mapper = JsonUtiles.getObjectMapper(Orden.class, new CheckOutDesealizer(Orden.class));
+        Orden ordenNew;
+        try {
+            ordenNew = mapper.readValue(json, Orden.class);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        Orden orden = null;
+        try {
+            orden = load(numeroOrden);
+        } catch (Exception e){}
+
+        orden.setPesajeFinal(ordenNew.getPesajeFinal());
+        orden.setEstado(4);
+        ordenRepository.save(orden);
+        StdSerializer<Orden> ser = new ConciliacionSerializer(Orden.class, detalleBusiness);
+        return JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(orden);
+    }
+
+    @Override
+    public String conciliacion(long numeroOrden) throws NotFoundException, JsonProcessingException, BusinessException {
+        Orden orden = load(numeroOrden);;
+        if(!(orden.getEstado()!=4)){
+            StdSerializer<Orden> ser = new ConciliacionSerializer(Orden.class, detalleBusiness);
+            return JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(orden);
+        }
+        return null;
+    }
 
 
     @Override

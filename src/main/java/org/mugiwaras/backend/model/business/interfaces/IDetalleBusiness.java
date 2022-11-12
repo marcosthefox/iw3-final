@@ -15,4 +15,6 @@ public interface IDetalleBusiness {
     public List<Detalle> list() throws BusinessException;
 
     Detalle add(Detalle detalle,long numeroOrden,int password) throws FoundException, BusinessException, NotFoundException;
+
+    public List<Detalle> listByNumeroOrden(long numeroOrden) throws BusinessException;
 }

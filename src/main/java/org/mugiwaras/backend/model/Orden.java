@@ -60,6 +60,9 @@ public class Orden implements Serializable {
     @Column(name = "password")
     private long password;
 
+    @Column(name = "pesaje_final")
+    private long pesajeFinal;
+
 
 
 }
