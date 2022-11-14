@@ -1,7 +1,6 @@
 package org.mugiwaras.backend.model.business.implementations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +15,10 @@ import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
 import org.mugiwaras.backend.model.deserealizer.CheckInDeserealizer;
 import org.mugiwaras.backend.model.deserealizer.CheckOutDesealizer;
-import org.mugiwaras.backend.model.persistence.DetalleRepository;
+import org.mugiwaras.backend.model.deserealizer.OrdenDeserealizer;
 import org.mugiwaras.backend.model.persistence.OrdenRepository;
 import org.mugiwaras.backend.model.serializer.ConciliacionSerializer;
 import org.mugiwaras.backend.util.JsonUtiles;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -100,7 +98,15 @@ public class OrdenBusiness implements IOrdenBusiness {
     }
 
     @Override
-    public Orden add(Orden orden) throws BusinessException, FoundException, NotFoundException {
+    public Orden add(String json) throws BusinessException, FoundException, NotFoundException {
+        ObjectMapper mapper = JsonUtiles.getObjectMapper(Orden.class, new OrdenDeserealizer(Orden.class));
+        Orden orden;
+        try {
+            orden = mapper.readValue(json, Orden.class);
+        } catch (JsonProcessingException e) {
+            throw BusinessException.builder().ex(e).build();
+        }
+
         try {
             load(orden.getNumeroOrden());
             throw FoundException.builder().message("Ya hay una orden con el nro =" + orden.getNumeroOrden()).build();
@@ -128,7 +134,7 @@ public class OrdenBusiness implements IOrdenBusiness {
 
             return ordenRepository.save(orden);
         } catch (Exception e) {
-            throw BusinessException.builder().message("Error cracion de la orden").build();
+            throw BusinessException.builder().message("Error creacion de la orden").build();
         }
 
     }
@@ -165,7 +171,6 @@ public class OrdenBusiness implements IOrdenBusiness {
         } catch (Exception e) {
         }
         orden.setEstado(3);
-        // asigna alguna fecha a la orden??
         return ordenRepository.save(orden);
     }
 

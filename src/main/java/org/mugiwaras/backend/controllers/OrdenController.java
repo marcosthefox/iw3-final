@@ -5,8 +5,6 @@ import lombok.SneakyThrows;
 import org.mugiwaras.backend.controllers.constants.Constants;
 import org.mugiwaras.backend.model.Detalle;
 import org.mugiwaras.backend.model.Orden;
-import org.mugiwaras.backend.model.business.exceptions.BusinessException;
-import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.interfaces.IDetalleBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
 import org.mugiwaras.backend.model.serializer.DetalleJsonSerializer;
@@ -37,9 +35,9 @@ public class OrdenController extends BaseRestController {
 
     @SneakyThrows
     @PostMapping(value = "/inicio", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> save(@RequestBody Orden orden) {
+    public ResponseEntity<?> save(@RequestBody String json) {
         StdSerializer<Orden> ser = new OrdenJsonSerializer(Orden.class, false);
-        String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.add(orden));
+        String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.add(json));
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
@@ -72,13 +70,13 @@ public class OrdenController extends BaseRestController {
 
     @SneakyThrows
     @PutMapping(value = "/checkout", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> checkOut(@RequestBody String pesajeFinal, @RequestHeader(name = "Numero-Orden") long numeroOrden){
+    public ResponseEntity<?> checkOut(@RequestBody String pesajeFinal, @RequestHeader(name = "Numero-Orden") long numeroOrden) {
         return new ResponseEntity<>(ordenBusiness.checkOut(pesajeFinal, numeroOrden), HttpStatus.OK);
     }
 
     @SneakyThrows
-    @GetMapping (value = "/conciliacion", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> checkOut(@RequestHeader(name = "Numero-Orden") long numeroOrden){
+    @GetMapping(value = "/conciliacion", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> checkOut(@RequestHeader(name = "Numero-Orden") long numeroOrden) {
         return new ResponseEntity<>(ordenBusiness.conciliacion(numeroOrden), HttpStatus.OK);
     }
 
