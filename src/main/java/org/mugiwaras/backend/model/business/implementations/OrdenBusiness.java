@@ -40,6 +40,19 @@ public class OrdenBusiness implements IOrdenBusiness {
 
     @Override
     public String checkOut(String json, long numeroOrden) throws NotFoundException, BusinessException, JsonProcessingException {
+
+        Orden orden = null;
+        try {
+            orden = load(numeroOrden);
+        } catch (Exception e){
+            throw BusinessException.builder().message("Error al cargar la orden").build();
+        }
+
+        if(orden.getEstado()!=3){
+            throw BusinessException.builder().message("Error, primero realize el cierre de orden").build();
+        }
+
+
         ObjectMapper mapper = JsonUtiles.getObjectMapper(Orden.class, new CheckOutDesealizer(Orden.class));
         Orden ordenNew;
         try {
@@ -47,12 +60,6 @@ public class OrdenBusiness implements IOrdenBusiness {
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
-        }
-        Orden orden = null;
-        try {
-            orden = load(numeroOrden);
-        } catch (Exception e){
-            throw BusinessException.builder().message("Error al cargar la orden").build();
         }
 
         orden.setPesajeFinal(ordenNew.getPesajeFinal());
@@ -66,12 +73,11 @@ public class OrdenBusiness implements IOrdenBusiness {
     @Override
     public String conciliacion(long numeroOrden) throws NotFoundException, JsonProcessingException, BusinessException {
         Orden orden = load(numeroOrden);;
-        if(!(orden.getEstado()!=4)){
+        if(orden.getEstado()==4){
             StdSerializer<Orden> ser = new ConciliacionSerializer(Orden.class, detalleBusiness);
             return JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(orden);
-        }
-        else {
-            throw BusinessException.builder().message("Error orden no valida.").build();
+        } else {
+            throw BusinessException.builder().message("Error, realize primero el check-out ").build();
         }
 
     }
@@ -146,14 +152,6 @@ public class OrdenBusiness implements IOrdenBusiness {
 
     @Override
     public Orden checkIn(String json, long numeroOrden) throws NotFoundException, BusinessException {
-        ObjectMapper mapper = JsonUtiles.getObjectMapper(Orden.class, new CheckInDeserealizer(Orden.class));
-        Orden ordenNew;
-        try {
-            ordenNew = mapper.readValue(json, Orden.class);
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
-            throw BusinessException.builder().ex(e).build();
-        }
 
         Orden orden = null;
         try {
@@ -162,6 +160,18 @@ public class OrdenBusiness implements IOrdenBusiness {
             throw BusinessException.builder().message("Error al cargar la orden").build();
         }
 
+        if(orden.getEstado()!=1){
+            throw BusinessException.builder().message("La orden no esta en estado 1").build();
+        }
+
+        ObjectMapper mapper = JsonUtiles.getObjectMapper(Orden.class, new CheckInDeserealizer(Orden.class));
+        Orden ordenNew;
+        try {
+            ordenNew = mapper.readValue(json, Orden.class);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            throw BusinessException.builder().ex(e).build();
+        }
 
         orden.setTara(ordenNew.getTara());
         orden.setFechaPesajeInicial(OffsetDateTime.now());
@@ -177,6 +187,9 @@ public class OrdenBusiness implements IOrdenBusiness {
             orden = load(numeroOrden);
         } catch (Exception e) {
             throw BusinessException.builder().message("Error al cargar la orden").build();
+        }
+        if(orden.getEstado()!=2){
+            throw BusinessException.builder().message("La orden no esta en estado 2").build();
         }
         orden.setEstado(3);
         return ordenRepository.save(orden);
