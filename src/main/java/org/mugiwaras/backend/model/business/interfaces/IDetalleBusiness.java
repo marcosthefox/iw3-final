@@ -3,6 +3,7 @@ package org.mugiwaras.backend.model.business.interfaces;
 import org.mugiwaras.backend.model.Detalle;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.FoundException;
+import org.mugiwaras.backend.model.business.exceptions.NotAuthorizedException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.springframework.lang.Nullable;
 
@@ -14,7 +15,7 @@ public interface IDetalleBusiness {
     @Nullable
     public List<Detalle> list() throws BusinessException;
 
-    Detalle add(Detalle detalle,long numeroOrden,int password) throws FoundException, BusinessException, NotFoundException;
+    Detalle add(Detalle detalle,long numeroOrden,int password) throws FoundException, BusinessException, NotFoundException, NotAuthorizedException;
 
     public List<Detalle> listByNumeroOrden(long numeroOrden) throws BusinessException;
 }

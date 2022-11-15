@@ -51,7 +51,9 @@ public class OrdenBusiness implements IOrdenBusiness {
         Orden orden = null;
         try {
             orden = load(numeroOrden);
-        } catch (Exception e){}
+        } catch (Exception e){
+            throw BusinessException.builder().message("Error al cargar la orden").build();
+        }
 
         orden.setPesajeFinal(ordenNew.getPesajeFinal());
         orden.setFechaPesajeFinal(OffsetDateTime.now());
@@ -68,7 +70,10 @@ public class OrdenBusiness implements IOrdenBusiness {
             StdSerializer<Orden> ser = new ConciliacionSerializer(Orden.class, detalleBusiness);
             return JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(orden);
         }
-        return null; //HACELO BIEN TONY!
+        else {
+            throw BusinessException.builder().message("Error orden no valida.").build();
+        }
+
     }
 
 
@@ -93,7 +98,7 @@ public class OrdenBusiness implements IOrdenBusiness {
             return ordenRepository.findAll();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw BusinessException.builder().ex(e).build();
+            throw BusinessException.builder().message("Error al traer las ordenes.").build();
         }
     }
 
@@ -154,7 +159,9 @@ public class OrdenBusiness implements IOrdenBusiness {
         try {
             orden = load(numeroOrden);
         } catch (Exception e) {
+            throw BusinessException.builder().message("Error al cargar la orden").build();
         }
+
 
         orden.setTara(ordenNew.getTara());
         orden.setFechaPesajeInicial(OffsetDateTime.now());
@@ -169,6 +176,7 @@ public class OrdenBusiness implements IOrdenBusiness {
         try {
             orden = load(numeroOrden);
         } catch (Exception e) {
+            throw BusinessException.builder().message("Error al cargar la orden").build();
         }
         orden.setEstado(3);
         return ordenRepository.save(orden);

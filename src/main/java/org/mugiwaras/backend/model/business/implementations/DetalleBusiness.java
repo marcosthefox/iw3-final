@@ -6,6 +6,7 @@ import org.mugiwaras.backend.model.Detalle;
 import org.mugiwaras.backend.model.Orden;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.FoundException;
+import org.mugiwaras.backend.model.business.exceptions.NotAuthorizedException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.IDetalleBusiness;
 import org.mugiwaras.backend.model.persistence.DetalleRepository;
@@ -65,7 +66,7 @@ public class DetalleBusiness implements IDetalleBusiness {
 
 
     @Override
-    public Detalle add(Detalle detalle, long numeroOrden, int password) throws FoundException, BusinessException, NotFoundException {
+    public Detalle add(Detalle detalle, long numeroOrden, int password) throws FoundException, BusinessException, NotFoundException, NotAuthorizedException {
 
         Optional<Orden> orden = ordenRepository.findByNumeroOrden(numeroOrden);
         if (orden.isEmpty()) {
@@ -75,7 +76,7 @@ public class DetalleBusiness implements IDetalleBusiness {
             throw BusinessException.builder().message("Error orden no disponible para la carga").build();
         }
         if (orden.get().getPassword() != password) {
-            throw BusinessException.builder().message("Password Incorrecta").build();
+            throw NotAuthorizedException.builder().message("Password Incorrecta").build();
         }
         try {
             if(!detalleRepository.existsDetalleByOrden_numeroOrden(numeroOrden)){
