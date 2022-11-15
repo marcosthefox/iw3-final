@@ -5,6 +5,9 @@ import lombok.SneakyThrows;
 import org.mugiwaras.backend.controllers.constants.Constants;
 import org.mugiwaras.backend.model.Detalle;
 import org.mugiwaras.backend.model.Orden;
+import org.mugiwaras.backend.model.business.exceptions.FoundException;
+import org.mugiwaras.backend.model.business.exceptions.NotAuthorizedException;
+import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.IDetalleBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
 import org.mugiwaras.backend.model.serializer.DetalleJsonSerializer;
@@ -37,16 +40,25 @@ public class OrdenController extends BaseRestController {
     @PostMapping(value = "/inicio", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody String json) {
         StdSerializer<Orden> ser = new OrdenJsonSerializer(Orden.class, false);
-        String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.add(json));
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
+        try {
+            String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.add(json));
+            return new ResponseEntity<>(result, HttpStatus.CREATED);
+        } catch (FoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
     }
+
 
     @SneakyThrows
     @PutMapping(value = "/checkin", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> checkIn(@RequestBody String tara, @RequestHeader(name = "Numero-Orden") long numeroOrden) {
         StdSerializer<Orden> ser = new OrdenPassJsonSerializer(Orden.class, false);
-        String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.checkIn(tara, numeroOrden));
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        try {
+            String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.checkIn(tara, numeroOrden));
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @SneakyThrows
@@ -55,8 +67,14 @@ public class OrdenController extends BaseRestController {
                                       @RequestHeader(name = "Numero-Orden") long numeroOrden,
                                       @RequestHeader(name = "Password") int password) {
         StdSerializer<Detalle> ser = new DetalleJsonSerializer(Detalle.class, false);
-        String result = JsonUtiles.getObjectMapper(Detalle.class, ser, null).writeValueAsString(detalleBusiness.add(detalle, numeroOrden, password));
-        return new ResponseEntity<>(result, HttpStatus.CREATED); //ponelo lindo tony
+        try {
+            String result = JsonUtiles.getObjectMapper(Detalle.class, ser, null).writeValueAsString(detalleBusiness.add(detalle, numeroOrden, password));
+            return new ResponseEntity<>(result, HttpStatus.CREATED);
+        } catch (NotAuthorizedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);}
+
 
     }
 
@@ -64,9 +82,15 @@ public class OrdenController extends BaseRestController {
     @PostMapping(value = "/cierre/orden", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> close(@RequestHeader(name = "Numero-Orden") long numeroOrden) {
         StdSerializer<Orden> ser = new OrdenCierreJsonSerializer(Orden.class, false);
-        String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.closeOrder(numeroOrden));
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        try {
+            String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.closeOrder(numeroOrden));
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+
     }
+
 
     @SneakyThrows
     @PutMapping(value = "/checkout", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -77,7 +101,11 @@ public class OrdenController extends BaseRestController {
     @SneakyThrows
     @GetMapping(value = "/conciliacion", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> checkOut(@RequestHeader(name = "Numero-Orden") long numeroOrden) {
-        return new ResponseEntity<>(ordenBusiness.conciliacion(numeroOrden), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(ordenBusiness.conciliacion(numeroOrden), HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
 }
