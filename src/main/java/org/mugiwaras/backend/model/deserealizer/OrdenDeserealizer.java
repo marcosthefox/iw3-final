@@ -29,29 +29,29 @@ public class OrdenDeserealizer extends StdDeserializer<Orden> {
         JsonNode clienteNode = node.get("cliente");
         JsonNode productoNode = node.get("producto");
 
-        String numeroOrden = JsonUtiles.getString(node, "numeroOrden,numero_orden,numero-orden".split(","), "0");
-        String patente = JsonUtiles.getString(camionNode, "patente".split(","), "0");
-        String descripcion = JsonUtiles.getString(camionNode, "descripcion".split(","), "0");
+        String numeroOrden = JsonUtiles.getString(node, "numeroOrden,numero_orden,numero-orden".split(","), null);
+        String patente = JsonUtiles.getString(camionNode, "patente".split(","), null);
+        String descripcion = JsonUtiles.getString(camionNode, "descripcion".split(","), null);
 
         List<Cisternado> cisternadoList = new ArrayList<>();
         for (JsonNode nodo : cisternaNode) {
             Cisternado aux = new Cisternado();
-            String tamanio = JsonUtiles.getString(nodo, "tamanio".split(","), "0");
+            String tamanio = JsonUtiles.getString(nodo, "tamanio".split(","), null);
             aux.setTamanio(Long.parseLong(tamanio));
             cisternadoList.add(aux);
         }
 
-        String totalCisterna = JsonUtiles.getString(camionNode, "totalCisterna,total_cisterna,total-cisterna".split(","), "0");
-        String dni = JsonUtiles.getString(choferNode, "dni".split(","), "0");
-        String nombre = JsonUtiles.getString(choferNode, "nombre".split(","), "0");
-        String apellido = JsonUtiles.getString(choferNode, "apellido".split(","), "0");
-        String razonSocial = JsonUtiles.getString(clienteNode, "razonSocial,razon_social,razon-social".split(","), "0");
-        String contacto = JsonUtiles.getString(clienteNode, "contacto".split(","), "0");
-        String id = JsonUtiles.getString(productoNode, "id".split(","), "0");
-        String nombreProducto = JsonUtiles.getString(productoNode, "nombre".split(","), "0");
-        String descripcionProducto = JsonUtiles.getString(productoNode, "descripcion".split(","), "0");
-        String preset = JsonUtiles.getString(node, "preset".split(","), "0");
-        String fechaTurnoCarga = JsonUtiles.getString(node, "fechaTurnoCarga,fecha_turno_carga,fecha-turno-carga".split(","), "0");
+        String totalCisterna = JsonUtiles.getString(camionNode, "totalCisterna,total_cisterna,total-cisterna".split(","), null);
+        String dni = JsonUtiles.getString(choferNode, "dni".split(","), null);
+        String nombre = JsonUtiles.getString(choferNode, "nombre".split(","), null);
+        String apellido = JsonUtiles.getString(choferNode, "apellido".split(","), null);
+        String razonSocial = JsonUtiles.getString(clienteNode, "razonSocial,razon_social,razon-social".split(","), null);
+        String contacto = JsonUtiles.getString(clienteNode, "contacto".split(","), null);
+        String id = JsonUtiles.getString(productoNode, "id".split(","), null);
+        String nombreProducto = JsonUtiles.getString(productoNode, "nombre".split(","), null);
+        String descripcionProducto = JsonUtiles.getString(productoNode, "descripcion".split(","), null);
+        String preset = JsonUtiles.getString(node, "preset".split(","), null);
+        String fechaTurnoCarga = JsonUtiles.getString(node, "fechaTurnoCarga,fecha_turno_carga,fecha-turno-carga".split(","), null);
 
         Orden r = new Orden();
         r.setNumeroOrden(Long.parseLong(numeroOrden));
