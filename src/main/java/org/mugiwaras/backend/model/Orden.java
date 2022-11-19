@@ -21,6 +21,9 @@ public class Orden implements Serializable {
     @Id
     private long numeroOrden;
 
+    @Column(nullable = false , unique = true)
+    private String CodigoExterno;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_camion")
     private Camion camion;
