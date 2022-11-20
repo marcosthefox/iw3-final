@@ -7,4 +7,12 @@ public final class Constants {
 
     public static final String URL_ORDENINICIO = URL_ORDEN + "/inicio";
 
+    public static final String URL_CAMION = URL_API + "/camion";
+
+    public static final String URL_CHOFER = URL_API + "/chofer";
+
+    public static final String URL_CLIENTE = URL_API + "/cliente";
+
+    public static final String URL_PRODUCTO = URL_API + "/producto";
+
 }
