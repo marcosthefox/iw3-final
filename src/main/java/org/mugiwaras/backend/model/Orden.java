@@ -63,8 +63,15 @@ public class Orden implements Serializable {
     @Column(name = "password")
     private long password;
 
+    //Ultimos valores medidos del detalle de carga
     @Column(name="ultima_masa")
     private float ultimaMasa;
+    @Column(name="ultima_densidad")
+    private float ultimaDensidad;
+    @Column(name="ultima_temperatura")
+    private float ultimaTemperatura;
+    @Column(name="ultimo_caudal")
+    private float ultimoCaudal;
 
     @Column(name = "pesaje_final")
     private long pesajeFinal;

@@ -81,10 +81,9 @@ public class DetalleBusiness implements IDetalleBusiness {
         if(detalle.getCaudal()<=0)
             throw BusinessException.builder().message("Valor de Caudal no valido.").build();
 
-        if(orden.get().getUltimaMasa()>detalle.getMasa()){
+        if(Float.compare(detalle.getMasa(),orden.get().getUltimaMasa())<=0){
             throw BusinessException.builder().message("Error valor de masa inferior al ultimo cargado").build();
         }
-
         try {
             if(!detalleRepository.existsDetalleByOrden_numeroOrden(numeroOrden)){
                 orden.get().setFechaDetalleInicial(OffsetDateTime.now());
@@ -93,8 +92,12 @@ public class DetalleBusiness implements IDetalleBusiness {
                 orden.get().setFechaDetalleFinal(OffsetDateTime.now());
                 //Asignamos la fecha de detalle y la orden
                 detalle.setFechaDetalle(OffsetDateTime.now());
-                detalle.setOrden(orden.get());
                 orden.get().setUltimaMasa(detalle.getMasa());
+                orden.get().setUltimaDensidad(detalle.getDensidad());
+                orden.get().setUltimaTemperatura(detalle.getTemperatura());
+                orden.get().setUltimoCaudal(detalle.getCaudal());
+                detalle.setOrden(orden.get());
+
             }
             ordenRepository.save(orden.get());
             return detalleRepository.save(detalle);
