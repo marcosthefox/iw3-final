@@ -75,9 +75,16 @@ public class DetalleBusiness implements IDetalleBusiness {
         if (orden.get().getEstado() != 2) {
             throw BusinessException.builder().message("Error orden no disponible para la carga").build();
         }
-        if (orden.get().getPassword() != password) {
-            throw NotAuthorizedException.builder().message("Password Incorrecta").build();
+    //    if (orden.get().getPassword() != password) {
+    //        throw NotAuthorizedException.builder().message("Password Incorrecta").build();
+    //    }
+        if(detalle.getCaudal()<=0)
+            throw BusinessException.builder().message("Valor de Caudal no valido.").build();
+
+        if(orden.get().getUltimaMasa()>detalle.getMasa()){
+            throw BusinessException.builder().message("Error valor de masa inferior al ultimo cargado").build();
         }
+
         try {
             if(!detalleRepository.existsDetalleByOrden_numeroOrden(numeroOrden)){
                 orden.get().setFechaDetalleInicial(OffsetDateTime.now());
@@ -87,8 +94,9 @@ public class DetalleBusiness implements IDetalleBusiness {
                 //Asignamos la fecha de detalle y la orden
                 detalle.setFechaDetalle(OffsetDateTime.now());
                 detalle.setOrden(orden.get());
+                orden.get().setUltimaMasa(detalle.getMasa());
             }
-
+            ordenRepository.save(orden.get());
             return detalleRepository.save(detalle);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
