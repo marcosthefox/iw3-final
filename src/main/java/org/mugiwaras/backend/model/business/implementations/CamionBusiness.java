@@ -3,6 +3,7 @@ package org.mugiwaras.backend.model.business.implementations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mugiwaras.backend.model.Camion;
+import org.mugiwaras.backend.model.Cisternado;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
@@ -21,6 +22,8 @@ public class CamionBusiness implements ICamionBusiness {
 
 
     private final CamionRepository camionRepository;
+
+    private final CisternadoBusiness cisternadoBusiness;
 
     @Override
     public Camion load(String patente) throws NotFoundException, BusinessException {
@@ -55,7 +58,12 @@ public class CamionBusiness implements ICamionBusiness {
         } catch (NotFoundException e) {
         }
         try {
-            return camionRepository.save(camion);
+            Camion result = camionRepository.save(camion);
+            for (Cisternado cisternado : camion.getDatosCisterna()){
+                cisternado.setCamion(result);
+                cisternadoBusiness.add(cisternado);
+            }
+            return result;
         } catch (Exception e) {
             throw BusinessException.builder().message("Error creacion de camion").build();
         }

@@ -1,6 +1,7 @@
 package org.mugiwaras.backend.controllers;
 
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.mugiwaras.backend.controllers.constants.Constants;
 import org.mugiwaras.backend.model.Detalle;
@@ -15,7 +16,6 @@ import org.mugiwaras.backend.model.serializer.OrdenCierreJsonSerializer;
 import org.mugiwaras.backend.model.serializer.OrdenJsonSerializer;
 import org.mugiwaras.backend.model.serializer.OrdenPassJsonSerializer;
 import org.mugiwaras.backend.util.JsonUtiles;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(Constants.URL_ORDEN)
+@RequiredArgsConstructor
 public class OrdenController extends BaseRestController {
 
-    @Autowired
-    private IOrdenBusiness ordenBusiness;
-    @Autowired
-    private IDetalleBusiness detalleBusiness;
+
+    private final IOrdenBusiness ordenBusiness;
+    private final IDetalleBusiness detalleBusiness;
 
     @SneakyThrows
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -38,16 +38,27 @@ public class OrdenController extends BaseRestController {
 
     @SneakyThrows
     @PostMapping(value = "/inicio", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> save(@RequestBody String json) {
+    public ResponseEntity<?> save(@RequestBody Orden orden) {
         StdSerializer<Orden> ser = new OrdenJsonSerializer(Orden.class, false);
         try {
-            String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.add(json));
+            String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.add(orden));
             return new ResponseEntity<>(result, HttpStatus.CREATED);
         } catch (FoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
+    @SneakyThrows
+    @PostMapping(value = "/b2b", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addExternal(@RequestBody String json) {
+        StdSerializer<Orden> ser = new OrdenJsonSerializer(Orden.class, false);
+        try {
+            String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.addExternal(json));
+            return new ResponseEntity<>(result, HttpStatus.CREATED);
+        } catch (FoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
 
     @SneakyThrows
     @PutMapping(value = "/checkin", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -72,8 +83,9 @@ public class OrdenController extends BaseRestController {
             return new ResponseEntity<>(result, HttpStatus.CREATED);
         } catch (NotAuthorizedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
-        } catch (NotFoundException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);}
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
 
 
     }

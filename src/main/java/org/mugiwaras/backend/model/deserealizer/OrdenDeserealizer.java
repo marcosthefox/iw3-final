@@ -32,6 +32,9 @@ public class OrdenDeserealizer extends StdDeserializer<Orden> {
         String numeroOrden = JsonUtiles.getString(node, "numeroOrden,numero_orden,numero-orden".split(","), null);
         String patente = JsonUtiles.getString(camionNode, "patente".split(","), null);
         String descripcion = JsonUtiles.getString(camionNode, "descripcion".split(","), null);
+        String codigoExterno = JsonUtiles.getString(node,
+                "codigoExterno,codigo,codigoExternoOrden,codigo-externo-orden,codigo-externo,ordenCodigoExterno,orden-codigo-externo".split(","),
+                System.currentTimeMillis() + "");
 
         List<Cisternado> cisternadoList = new ArrayList<>();
         for (JsonNode nodo : cisternaNode) {
@@ -61,6 +64,7 @@ public class OrdenDeserealizer extends StdDeserializer<Orden> {
         r.setProducto(Producto.builder().id(Long.parseLong(id)).nombre(nombreProducto).descripcion(descripcionProducto).build());
         r.setPreset(Float.parseFloat(preset));
         r.setFechaTurnoCarga(OffsetDateTime.parse(fechaTurnoCarga));
+        r.setCodigoExterno(codigoExterno);
         return r;
     }
 }
