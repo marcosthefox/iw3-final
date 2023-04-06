@@ -1,5 +1,9 @@
 package org.mugiwaras.backend;
 
+import org.mugiwaras.backend.auth.IUserBusiness;
+import org.mugiwaras.backend.auth.custom.CustomAuthenticationManager;
+import org.mugiwaras.backend.auth.filter.JWTAuthorizationFilter;
+import org.mugiwaras.backend.controllers.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,10 +25,39 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfiguration {
 
     @Bean
+    public PasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Autowired
+    private IUserBusiness userBusiness;
+
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        return new CustomAuthenticationManager(bCryptPasswordEncoder(), userBusiness);
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedMethods("*").allowedHeaders("*").allowedOrigins("*");
+            }
+        };
+    }
+
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .authorizeRequests().antMatchers("/**").permitAll()
-                .anyRequest().authenticated();
+                .authorizeRequests().antMatchers(HttpMethod.POST, Constants.URL_LOGIN).permitAll()
+                .antMatchers(HttpMethod.GET, Constants.URL_DUMMY).permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return http.build();
 
     }
