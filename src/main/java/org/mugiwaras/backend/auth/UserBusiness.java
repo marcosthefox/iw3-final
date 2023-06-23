@@ -65,6 +65,21 @@ public class UserBusiness implements IUserBusiness {
         setDisable(usernameOrEmail, true);
     }
 
+    @Override
+    public User add(User user) throws NotFoundException, BusinessException {
+//        try{
+//            if (userDAO.existsById(user.getIdUser())){
+//                return load(user.getUsername());
+//            }
+//        } catch (NotFoundException e){
+//        }
+        try{
+            return userDAO.save(user);
+        } catch (Exception e){
+            throw BusinessException.builder().message("Error crecion de usuario").build();
+        }
+    }
+
     private void setDisable(String usernameOrEmail, boolean enable) throws NotFoundException, BusinessException {
         User user = load(usernameOrEmail);
         user.setEnabled(enable);
@@ -85,5 +100,6 @@ public class UserBusiness implements IUserBusiness {
             throw BusinessException.builder().ex(e).build();
         }
     }
+
 
 }

@@ -54,6 +54,7 @@ public class SecurityConfiguration {
         http.cors().and().csrf().disable()
                 .authorizeRequests().antMatchers(HttpMethod.POST, Constants.URL_LOGIN).permitAll()
 //                .antMatchers(HttpMethod.GET, Constants.URL_DUMMY).permitAll()
+                .antMatchers(HttpMethod.POST, Constants.URL_REGISTER).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()))
