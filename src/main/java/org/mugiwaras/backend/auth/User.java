@@ -83,6 +83,9 @@ public class User implements UserDetails {
             @JoinColumn(name = "idRole", referencedColumnName = "id") })
     private Set<Role> roles;
 
+    @Column(columnDefinition = "TEXT")
+    private String matriz; // agrega el campo de la matriz
+
     @Transient
     public boolean isInRole(Role role) {
         return isInRole(role.getName());

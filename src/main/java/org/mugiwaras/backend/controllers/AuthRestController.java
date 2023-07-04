@@ -10,6 +10,7 @@ import org.mugiwaras.backend.auth.User;
 import org.mugiwaras.backend.auth.UserJsonSerializer;
 import org.mugiwaras.backend.auth.custom.CustomAuthenticationManager;
 import org.mugiwaras.backend.auth.filter.AuthConstants;
+import org.mugiwaras.backend.auth.response.UserLoginResponse;
 import org.mugiwaras.backend.controllers.constants.Constants;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
@@ -28,9 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 
 @RestController
 public class AuthRestController extends BaseRestController {
@@ -41,7 +40,7 @@ public class AuthRestController extends BaseRestController {
     @Autowired
     private IUserBusiness userBusiness;
 
-    @PostMapping(value = Constants.URL_LOGIN, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = Constants.URL_LOGIN, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> loginExternalOnlyToken(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "json", defaultValue = "false") Boolean json) {
         Authentication auth = null;
         StdSerializer<User> ser = null;
@@ -66,7 +65,10 @@ public class AuthRestController extends BaseRestController {
             }
             return new ResponseEntity<String>(result, HttpStatus.OK);
         }
-        return new ResponseEntity<String>(token, HttpStatus.OK);
+
+        UserLoginResponse response = UserLoginResponse.builder().token(token).matriz(user.getMatriz()).build();
+        return new ResponseEntity<UserLoginResponse>(response, HttpStatus.OK);
+//        return new ResponseEntity<String>(token, HttpStatus.OK);
     }
 
     @SneakyThrows
