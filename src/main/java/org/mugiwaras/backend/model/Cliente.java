@@ -17,7 +17,6 @@ import java.io.Serializable;
 @Builder
 public class Cliente implements Serializable {
 
-
     private static final long serialVersionUID = 8942462212649854562L;
 
     @Id
@@ -26,5 +25,6 @@ public class Cliente implements Serializable {
     @Column(name = "contacto")
     private long contacto;
 
-
+    @Column(length = 50, nullable = false, unique = true)
+    private String code; //codigo externo
 }

@@ -6,11 +6,10 @@ import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IClienteBusiness {
 
-    Cliente load(long rs) throws NotFoundException, BusinessException, FoundException;
+    Cliente load(String code) throws NotFoundException, BusinessException, FoundException;
 
     List<Cliente> list() throws BusinessException;
 

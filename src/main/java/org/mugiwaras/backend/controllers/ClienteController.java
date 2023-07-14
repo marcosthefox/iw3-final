@@ -42,10 +42,10 @@ public class ClienteController extends BaseRestController{
     }
 
     @SneakyThrows
-    @GetMapping(value = "/buscar/{razonsocial}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> get(@PathVariable("razonsocial") long razonSocial){
+    @GetMapping(value = "/buscar/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> get(@PathVariable("code") String code){
         try {
-            return new ResponseEntity<>(clienteBusiness.load(razonSocial), HttpStatus.OK);
+            return new ResponseEntity<>(clienteBusiness.load(code), HttpStatus.OK);
         } catch (FoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (NotFoundException e){

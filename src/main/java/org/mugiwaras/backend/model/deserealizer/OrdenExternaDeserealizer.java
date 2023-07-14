@@ -45,7 +45,7 @@ public class OrdenExternaDeserealizer extends StdDeserializer<Orden> {
         String codigoExterno = JsonUtiles.getString(node, "codigoExterno,codigo,codigoExternoOrden,codigo-externo-orden,codigo-externo,ordenCodigoExterno,orden-codigo-externo".split(","), System.currentTimeMillis() + "");
         String camion = JsonUtiles.getString(node, "camion,camionCode,camion-code".split(","), null);
         String chofer = JsonUtiles.getString(node, "chofer,choferCode,chofer-code".split(","), null);
-        String razonSocial = JsonUtiles.getString(node, "razonSocial,razon-social,cliente,razonSocialCliente,razon-social-cliente".split(","), null);
+        String cliente = JsonUtiles.getString(node, "cliente,clienteCode,cliente-code".split(","), null);
         String id = JsonUtiles.getString(node, "id,producto,idProducto,id-producto".split(","), null);
         String preset = JsonUtiles.getString(node, "preset".split(","), null);
         String fechaTurnoCarga = JsonUtiles.getString(node, "fechaTurnoCarga,fecha-turno-carga".split(","), null);
@@ -64,9 +64,9 @@ public class OrdenExternaDeserealizer extends StdDeserializer<Orden> {
             } catch (BusinessException | NotFoundException e) {
             }
         }
-        if (razonSocial != null) {
+        if (cliente != null) {
             try {
-                r.setCliente(clienteBusiness.load(Long.parseLong(razonSocial)));
+                r.setCliente(clienteBusiness.load(cliente)); //busca por codigo de cliente
             } catch (FoundException | BusinessException | NotFoundException e) {
             }
         }
