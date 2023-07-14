@@ -26,22 +26,22 @@ public class CamionBusiness implements ICamionBusiness {
     private final CisternadoBusiness cisternadoBusiness;
 
     @Override
-    public Camion load(String patente) throws NotFoundException, BusinessException {
+    public Camion load(String code) throws NotFoundException, BusinessException {
         Optional<Camion> camion;
         try {
-            camion = camionRepository.findByPatente(patente);
+            camion = camionRepository.findByCode(code);
         } catch (Exception e) {
             throw BusinessException.builder().ex(e).build();
         }
         if (camion.isEmpty()) {
-            throw NotFoundException.builder().message("No se encuentra el camion " + patente).build();
+            throw NotFoundException.builder().message("No se encuentra el camion " + code).build();
         }
         return camion.get();
     }
 
     @Override
-    public Boolean exists(String patente) {
-        return camionRepository.existsByPatente(patente);
+    public Boolean exists(String code) {
+        return camionRepository.existsByCode(code);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class CamionBusiness implements ICamionBusiness {
     @Override
     public Camion add(Camion camion) throws FoundException, BusinessException, NotFoundException {
         try {
-            if (camionRepository.existsByPatente(camion.getPatente())) {
+            if (camionRepository.existsByCode(camion.getCode())) {
                 return load(camion.getPatente());
             }
         } catch (NotFoundException e) {

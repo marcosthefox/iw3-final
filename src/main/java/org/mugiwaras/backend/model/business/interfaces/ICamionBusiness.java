@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface ICamionBusiness {
 
-    Camion load(String patente) throws NotFoundException, BusinessException, FoundException;
+    Camion load(String code) throws NotFoundException, BusinessException, FoundException;
 
-    Boolean exists(String patente) throws NotFoundException, BusinessException, FoundException;
+    Boolean exists(String code) throws NotFoundException, BusinessException, FoundException;
 
     List<Camion> list() throws BusinessException;
 

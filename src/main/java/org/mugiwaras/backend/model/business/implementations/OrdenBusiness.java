@@ -118,7 +118,7 @@ public class OrdenBusiness implements IOrdenBusiness {
         }
         Camion camion;
         try {
-            if (!camionBusiness.exists(orden.getCamion().getPatente())) {
+            if (!camionBusiness.exists(orden.getCamion().getCode())) {
                 // cuando el camion es nuevo
                 camionBusiness.add(orden.getCamion());
                 for (Cisternado cisternado : orden.getCamion().getDatosCisterna()) {

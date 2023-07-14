@@ -43,7 +43,7 @@ public class OrdenExternaDeserealizer extends StdDeserializer<Orden> {
 
         String numeroOrden = JsonUtiles.getString(node, "numeroOrden,numero-orden".split(","), null);
         String codigoExterno = JsonUtiles.getString(node, "codigoExterno,codigo,codigoExternoOrden,codigo-externo-orden,codigo-externo,ordenCodigoExterno,orden-codigo-externo".split(","), System.currentTimeMillis() + "");
-        String patente = JsonUtiles.getString(node, "patente,camion,camionPatente,camion-patente".split(","), null);
+        String camion = JsonUtiles.getString(node, "camion,camionCode,camion-code".split(","), null);
         String dni = JsonUtiles.getString(node, "dni,chofer,dniChofer,dni-chofer".split(","), null);
         String razonSocial = JsonUtiles.getString(node, "razonSocial,razon-social,cliente,razonSocialCliente,razon-social-cliente".split(","), null);
         String id = JsonUtiles.getString(node, "id,producto,idProducto,id-producto".split(","), null);
@@ -52,9 +52,9 @@ public class OrdenExternaDeserealizer extends StdDeserializer<Orden> {
 
         Orden r = new Orden();
         r.setNumeroOrden(Long.parseLong(numeroOrden));
-        if (patente != null) {
+        if (camion != null) {
             try {
-                r.setCamion(camionBusiness.load(patente));
+                r.setCamion(camionBusiness.load(camion)); //busca por codigo de camion
             } catch (FoundException | BusinessException | NotFoundException e) {
             }
         }

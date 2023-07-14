@@ -1,17 +1,13 @@
 package org.mugiwaras.backend.controllers;
 
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.mugiwaras.backend.controllers.constants.Constants;
 import org.mugiwaras.backend.model.Camion;
-import org.mugiwaras.backend.model.Orden;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.ICamionBusiness;
-import org.mugiwaras.backend.model.serializer.OrdenJsonSerializer;
-import org.mugiwaras.backend.util.JsonUtiles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,10 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(Constants.URL_CAMION)
 @RequiredArgsConstructor
-public class CamionController extends BaseRestController{
+public class CamionController extends BaseRestController {
 
     @Autowired
-    private  ICamionBusiness camionBusiness;
+    private ICamionBusiness camionBusiness;
 
 
    /* @GetMapping(value = "/{number}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,24 +51,18 @@ public class CamionController extends BaseRestController{
     }*/
 
     @SneakyThrows
-    @GetMapping(value = "/buscar/{patente}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> get(@PathVariable("patente") String patente){
+    @GetMapping(value = "/buscar/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> get(@PathVariable("code") String code) {
         try {
-            return new ResponseEntity<>(camionBusiness.load(patente), HttpStatus.OK);
+            return new ResponseEntity<>(camionBusiness.load(code), HttpStatus.OK);
         } catch (FoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-        } catch (NotFoundException e){
+        } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (BusinessException e){
-         return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
-
-
-
-
-
-
 
     @SneakyThrows
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -84,12 +74,11 @@ public class CamionController extends BaseRestController{
             return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
         } catch (FoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-        } catch (NotFoundException e){
+        } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (BusinessException e){
+        } catch (BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
-
 
 }

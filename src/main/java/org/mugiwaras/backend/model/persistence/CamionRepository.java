@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface CamionRepository extends JpaRepository<Camion, String> {
 
-    Optional<Camion> findByPatente(String patente);
+    Optional<Camion> findByCode(String code);
 
-    Boolean existsByPatente(String patente);
+    Boolean existsByCode(String code);
 }
