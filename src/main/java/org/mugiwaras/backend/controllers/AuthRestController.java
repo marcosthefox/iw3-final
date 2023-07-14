@@ -4,6 +4,13 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
 import org.mugiwaras.backend.auth.IUserBusiness;
 import org.mugiwaras.backend.auth.User;
@@ -33,16 +40,24 @@ import java.util.Date;
 import java.util.HashSet;
 
 @RestController
+@SecurityRequirement(name = "Bearer Authentication")
+@Tag(description = "API Servicios de Authentication", name = "Auth")
 public class AuthRestController extends BaseRestController {
     @Autowired
     private IUserBusiness userBusiness;
     @Autowired
     private AuthenticationManager authManager;
 
+    @Operation(operationId = "auth-login", summary = "Este servicio autentica un usuario.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario logueado correctamente. Retorna un token JWT."),
+            @ApiResponse(responseCode = "401", description = "No autorizado."),
+    })
     @PostMapping(value = Constants.URL_LOGIN, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<?> loginExternalOnlyToken(@RequestParam(value = "username") String username,
                                                     @RequestParam(value = "password") String password,
-                                                    @RequestParam(value = "json", defaultValue = "false") Boolean json) {
+                                                    @Parameter(hidden = true) //parametro oculto, no me acuerdo para q era!
+                                                        @RequestParam(value = "json", defaultValue = "false") Boolean json) {
         Authentication auth = null;
         StdSerializer<User> ser = null;
         String result = "";
