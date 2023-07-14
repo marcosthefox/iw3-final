@@ -10,6 +10,5 @@ import java.util.Optional;
 public interface CamionRepository extends JpaRepository<Camion, String> {
 
     Optional<Camion> findByCode(String code);
-
     Boolean existsByCode(String code);
 }

@@ -34,7 +34,7 @@ public class CamionBusiness implements ICamionBusiness {
             throw BusinessException.builder().ex(e).build();
         }
         if (camion.isEmpty()) {
-            throw NotFoundException.builder().message("No se encuentra el camion " + code).build();
+            throw NotFoundException.builder().message("No se encuentra el camion con CODIGO: " + code).build();
         }
         return camion.get();
     }

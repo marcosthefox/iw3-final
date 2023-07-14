@@ -28,4 +28,7 @@ public class Chofer implements Serializable {
 
     @Column(name = "apellido")
     private String apellido;
+
+    @Column(length = 50, nullable = false, unique = true)
+    private String code; //codigo externo
 }

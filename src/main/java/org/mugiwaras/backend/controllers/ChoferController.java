@@ -43,10 +43,10 @@ public class ChoferController extends BaseRestController{
     }
 
     @SneakyThrows
-    @GetMapping(value = "/buscar/{dni}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> get(@PathVariable("dni") long dni){
+    @GetMapping(value = "/buscar/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> get(@PathVariable("code") String code){
         try {
-            return new ResponseEntity<>(choferBusiness.load(dni), HttpStatus.OK);
+            return new ResponseEntity<>(choferBusiness.load(code), HttpStatus.OK);
         } catch (NotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (BusinessException e){

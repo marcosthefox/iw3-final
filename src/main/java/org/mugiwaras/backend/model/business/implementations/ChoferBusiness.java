@@ -20,19 +20,18 @@ public class ChoferBusiness implements IChoferBusiness {
     @Autowired
     private ChoferRepository choferRepository;
 
-
     @Override
-    public Chofer load(long dniChofer) throws NotFoundException, BusinessException {
+    public Chofer load(String code) throws NotFoundException, BusinessException {
         Optional<Chofer> chofer;
         try {
-            chofer = choferRepository.findOneByDni(dniChofer);
+            chofer = choferRepository.findByCode(code);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw BusinessException.builder().ex(e).build();
         }
 
         if (chofer.isEmpty()) {
-            throw NotFoundException.builder().message("No se encontro el chofer con DNI: " + dniChofer).build();
+            throw NotFoundException.builder().message("No se encontro el chofer con CODIGO: " + code).build();
         }
         return chofer.get();
     }
@@ -51,8 +50,8 @@ public class ChoferBusiness implements IChoferBusiness {
     @Override
     public Chofer add(Chofer chofer) throws FoundException, BusinessException, NotFoundException {
         try {
-            if (choferRepository.existsById(chofer.getDni())) {
-                return load(chofer.getDni());
+            if (choferRepository.existsByCode(chofer.getCode())) {
+                return load(chofer.getCode());
             }
         } catch (NotFoundException e) {
         }

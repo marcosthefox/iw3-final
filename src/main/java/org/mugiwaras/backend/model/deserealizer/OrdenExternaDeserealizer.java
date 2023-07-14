@@ -44,7 +44,7 @@ public class OrdenExternaDeserealizer extends StdDeserializer<Orden> {
         String numeroOrden = JsonUtiles.getString(node, "numeroOrden,numero-orden".split(","), null);
         String codigoExterno = JsonUtiles.getString(node, "codigoExterno,codigo,codigoExternoOrden,codigo-externo-orden,codigo-externo,ordenCodigoExterno,orden-codigo-externo".split(","), System.currentTimeMillis() + "");
         String camion = JsonUtiles.getString(node, "camion,camionCode,camion-code".split(","), null);
-        String dni = JsonUtiles.getString(node, "dni,chofer,dniChofer,dni-chofer".split(","), null);
+        String chofer = JsonUtiles.getString(node, "chofer,choferCode,chofer-code".split(","), null);
         String razonSocial = JsonUtiles.getString(node, "razonSocial,razon-social,cliente,razonSocialCliente,razon-social-cliente".split(","), null);
         String id = JsonUtiles.getString(node, "id,producto,idProducto,id-producto".split(","), null);
         String preset = JsonUtiles.getString(node, "preset".split(","), null);
@@ -58,9 +58,9 @@ public class OrdenExternaDeserealizer extends StdDeserializer<Orden> {
             } catch (FoundException | BusinessException | NotFoundException e) {
             }
         }
-        if (dni != null) {
+        if (chofer != null) {
             try {
-                r.setChofer(choferBusiness.load(Long.parseLong(dni)));
+                r.setChofer(choferBusiness.load(chofer)); //busca por codigo de chofer
             } catch (BusinessException | NotFoundException e) {
             }
         }
