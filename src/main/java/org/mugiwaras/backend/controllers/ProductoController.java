@@ -43,10 +43,10 @@ public class ProductoController extends BaseRestController{
     }
 
     @SneakyThrows
-    @GetMapping(value = "/buscar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> get(@PathVariable("id") long id){
+    @GetMapping(value = "/buscar/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> get(@PathVariable("code") String code){
         try {
-            return new ResponseEntity<>(productoBusiness.load(id), HttpStatus.OK);
+            return new ResponseEntity<>(productoBusiness.load(code), HttpStatus.OK);
         } catch (NotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (BusinessException e){

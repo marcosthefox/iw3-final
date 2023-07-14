@@ -46,7 +46,7 @@ public class OrdenExternaDeserealizer extends StdDeserializer<Orden> {
         String camion = JsonUtiles.getString(node, "camion,camionCode,camion-code".split(","), null);
         String chofer = JsonUtiles.getString(node, "chofer,choferCode,chofer-code".split(","), null);
         String cliente = JsonUtiles.getString(node, "cliente,clienteCode,cliente-code".split(","), null);
-        String id = JsonUtiles.getString(node, "id,producto,idProducto,id-producto".split(","), null);
+        String producto = JsonUtiles.getString(node, "producto,productoCode,producto-code".split(","), null);
         String preset = JsonUtiles.getString(node, "preset".split(","), null);
         String fechaTurnoCarga = JsonUtiles.getString(node, "fechaTurnoCarga,fecha-turno-carga".split(","), null);
 
@@ -70,9 +70,9 @@ public class OrdenExternaDeserealizer extends StdDeserializer<Orden> {
             } catch (FoundException | BusinessException | NotFoundException e) {
             }
         }
-        if (id != null) {
+        if (producto != null) {
             try {
-                r.setProducto(productoBusiness.load(Long.parseLong(id)));
+                r.setProducto(productoBusiness.load(producto)); //busca por codigo de producto
             } catch (BusinessException | NotFoundException e) {
             }
         }

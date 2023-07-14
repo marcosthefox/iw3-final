@@ -21,16 +21,16 @@ public class ProductoBusiness implements IProductoBusiness {
     ProductoRepository productoRepository;
 
     @Override
-    public Producto load(long id) throws BusinessException, NotFoundException {
+    public Producto load(String code) throws BusinessException, NotFoundException {
         Optional<Producto> producto;
         try {
-            producto = productoRepository.findById(id);
+            producto = productoRepository.findByCode(code);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw BusinessException.builder().ex(e).build();
         }
         if (producto.isEmpty()) {
-            throw NotFoundException.builder().message("No se encontro el producto con ID: " + id).build();
+            throw NotFoundException.builder().message("No se encontro el producto con CODIGO: " + code).build();
         }
         return producto.get();
     }
@@ -48,8 +48,8 @@ public class ProductoBusiness implements IProductoBusiness {
     @Override
     public Producto add(Producto producto) throws BusinessException, FoundException, NotFoundException {
         try {
-            if (productoRepository.existsById(producto.getId())) {
-                return load(producto.getId());
+            if (productoRepository.existsByCode(producto.getCode())) {
+                return load(producto.getCode());
             }
         } catch (NotFoundException e) {
         }

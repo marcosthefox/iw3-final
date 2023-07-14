@@ -6,11 +6,10 @@ import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IProductoBusiness {
 
-    Producto load(long id) throws BusinessException, NotFoundException;
+    Producto load(String code) throws BusinessException, NotFoundException;
 
     List<Producto> list() throws BusinessException;
 

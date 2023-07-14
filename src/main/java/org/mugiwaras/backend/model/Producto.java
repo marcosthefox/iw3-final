@@ -14,7 +14,6 @@ import java.io.Serializable;
 @Builder
 public class Producto implements Serializable {
 
-
     private static final long serialVersionUID = -2510094698283791123L;
 
     @Id
@@ -26,4 +25,6 @@ public class Producto implements Serializable {
     @Column(name = "descripcion")
     private String descripcion;
 
+    @Column(length = 50, nullable = false, unique = true)
+    private String code; //codigo externo
 }
