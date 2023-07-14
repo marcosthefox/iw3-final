@@ -9,6 +9,7 @@ import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.IClienteBusiness;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ClienteController extends BaseRestController{
 
-    private final IClienteBusiness clienteBusiness;
+    @Autowired
+    private  IClienteBusiness clienteBusiness;
 
     @SneakyThrows
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)

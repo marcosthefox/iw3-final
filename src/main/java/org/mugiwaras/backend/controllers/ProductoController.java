@@ -10,6 +10,7 @@ import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.IClienteBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IProductoBusiness;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +22,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ProductoController extends BaseRestController{
 
-    private final IProductoBusiness productoBusiness;
+    @Autowired
+    private IProductoBusiness productoBusiness;
 
     @SneakyThrows
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)

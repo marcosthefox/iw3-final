@@ -12,6 +12,7 @@ import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.ICamionBusiness;
 import org.mugiwaras.backend.model.serializer.OrdenJsonSerializer;
 import org.mugiwaras.backend.util.JsonUtiles;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +24,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CamionController extends BaseRestController{
 
-    private final ICamionBusiness camionBusiness;
+    @Autowired
+    private  ICamionBusiness camionBusiness;
 
 
    /* @GetMapping(value = "/{number}", produces = MediaType.APPLICATION_JSON_VALUE)

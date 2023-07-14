@@ -16,6 +16,7 @@ import org.mugiwaras.backend.model.serializer.OrdenCierreJsonSerializer;
 import org.mugiwaras.backend.model.serializer.OrdenJsonSerializer;
 import org.mugiwaras.backend.model.serializer.OrdenPassJsonSerializer;
 import org.mugiwaras.backend.util.JsonUtiles;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +28,10 @@ import org.springframework.web.bind.annotation.*;
 public class OrdenController extends BaseRestController {
 
 
-    private final IOrdenBusiness ordenBusiness;
-    private final IDetalleBusiness detalleBusiness;
+    @Autowired
+    private  IOrdenBusiness ordenBusiness;
+    @Autowired
+    private  IDetalleBusiness detalleBusiness;
 
     @SneakyThrows
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
