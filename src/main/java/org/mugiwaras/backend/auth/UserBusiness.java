@@ -86,4 +86,12 @@ public class UserBusiness implements IUserBusiness {
         }
     }
 
+    @Override
+    public User add(User user) throws NotFoundException, BusinessException {
+        try{
+            return userDAO.save(user);
+        } catch (Exception e){
+            throw BusinessException.builder().message("Error crecion de usuario").build();
+        }
+    }
 }

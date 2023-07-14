@@ -19,4 +19,5 @@ public interface IUserBusiness {
 
     public void enable(String usernameOrEmail) throws NotFoundException, BusinessException;
 
+    User add(User user) throws NotFoundException, BusinessException;
 }

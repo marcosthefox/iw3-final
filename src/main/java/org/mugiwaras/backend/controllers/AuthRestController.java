@@ -4,13 +4,18 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import lombok.SneakyThrows;
+import org.mugiwaras.backend.auth.IUserBusiness;
 import org.mugiwaras.backend.auth.User;
 import org.mugiwaras.backend.auth.UserJsonSerializer;
 import org.mugiwaras.backend.auth.custom.CustomAuthenticationManager;
 import org.mugiwaras.backend.auth.filter.AuthConstants;
 import org.mugiwaras.backend.controllers.constants.Constants;
+import org.mugiwaras.backend.model.business.exceptions.BusinessException;
+import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.util.JsonUtiles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +24,18 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 
 @RestController
 public class AuthRestController extends BaseRestController {
-
+    @Autowired
+    private IUserBusiness userBusiness;
     @Autowired
     private AuthenticationManager authManager;
 
@@ -65,5 +73,21 @@ public class AuthRestController extends BaseRestController {
             return new ResponseEntity<String>(result, HttpStatus.OK);
         }
         return new ResponseEntity<String>(token, HttpStatus.OK);
+    }
+
+    @SneakyThrows
+    @PostMapping(value = Constants.URL_REGISTER, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> save(@RequestBody User user) {
+        try {
+            user.setRoles(new HashSet<>());
+            User result = userBusiness.add(user);
+            HttpHeaders responseHeaders = new HttpHeaders();
+            return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
+        }
+        catch(NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch(BusinessException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
     }
 }

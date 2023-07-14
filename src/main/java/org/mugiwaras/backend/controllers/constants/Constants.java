@@ -20,6 +20,6 @@ public final class Constants {
 
     public static final String URL_AUTHORIZATION = URL_API + "/authorization";
 
-
+    public static final String URL_REGISTER = URL_API + "/auth/register";
 
 }
