@@ -1,6 +1,8 @@
 package org.mugiwaras.backend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.*;
 
 
@@ -21,6 +23,8 @@ public class Camion implements Serializable {
 
     private static final long serialVersionUID = -2162240618874701205L;
 
+    @Hidden
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id_camion;

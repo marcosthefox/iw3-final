@@ -38,8 +38,7 @@ public class ChoferController extends BaseRestController {
     @SneakyThrows
     @Operation(operationId = "chofer-post", summary = "Este servicio crea un chofer.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Chofer creado correctamente.", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = Chofer.class))}),
+            @ApiResponse(responseCode = "201", description = "Chofer creado correctamente."),
             @ApiResponse(responseCode = "409", description = "Conflict", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
             @ApiResponse(responseCode = "404", description = "Not found", content = {
@@ -51,7 +50,7 @@ public class ChoferController extends BaseRestController {
         try {
             Chofer result = choferBusiness.add(chofer);
             HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.set("location", Constants.URL_CHOFER + "/buscar/" + result.getDni());
+            responseHeaders.set("location", Constants.URL_CHOFER + "/buscar/" + result.getCode());
             return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
         } catch (FoundException | BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);

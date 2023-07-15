@@ -39,8 +39,7 @@ public class ClienteController extends BaseRestController {
     @SneakyThrows
     @Operation(operationId = "cliente-post", summary = "Este servicio crea un cliente.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Cliente creado correctamente.", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = Cliente.class))}),
+            @ApiResponse(responseCode = "201", description = "Cliente creado correctamente."),
             @ApiResponse(responseCode = "409", description = "Conflict", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
             @ApiResponse(responseCode = "404", description = "Not found", content = {
@@ -52,7 +51,7 @@ public class ClienteController extends BaseRestController {
         try {
             Cliente result = clienteBusiness.add(cliente);
             HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.set("location", Constants.URL_CLIENTE + "/buscar/" + result.getRazonSocial());
+            responseHeaders.set("location", Constants.URL_CLIENTE + "/buscar/" + result.getCode());
             return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
         } catch (FoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
