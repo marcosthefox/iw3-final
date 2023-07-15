@@ -1,5 +1,14 @@
 package org.mugiwaras.backend.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.mugiwaras.backend.controllers.constants.Constants;
@@ -10,6 +19,7 @@ import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.IClienteBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IProductoBusiness;
+import org.mugiwaras.backend.util.StandartResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +29,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(Constants.URL_PRODUCTO)
+@SecurityRequirement(name = "Bearer Authentication")
+@Tag(description = "API Servicios de la entidad Producto", name = "Producto")
 @RequiredArgsConstructor
 public class ProductoController extends BaseRestController{
 
@@ -26,6 +38,16 @@ public class ProductoController extends BaseRestController{
     private IProductoBusiness productoBusiness;
 
     @SneakyThrows
+    @Operation(operationId = "producto-post", summary = "Este servicio crea un producto.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Producto creado correctamente.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Producto.class))}),
+            @ApiResponse(responseCode = "409", description = "Conflict", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "Not found", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+    })
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody Producto producto) {
         try {
@@ -33,16 +55,25 @@ public class ProductoController extends BaseRestController{
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.set("location", Constants.URL_PRODUCTO + "/buscar/" + result.getId());
             return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
-        } catch (FoundException e) {
+        } catch (FoundException | BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (NotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (BusinessException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
     @SneakyThrows
+    @Operation(operationId = "producto-get", summary = "Este servicio busca un producto a partir de su codigo externo.")
+    @Parameter(in = ParameterIn.PATH, name = "code", schema = @Schema(type = "string"), required = true, description = "Codigo externo.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Se encontro el producto.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Producto.class))}),
+            @ApiResponse(responseCode = "409", description = "Conflict", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "No se encuentra el producto para el identificador informado", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+    })
     @GetMapping(value = "/buscar/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> get(@PathVariable("code") String code){
         try {

@@ -40,7 +40,6 @@ import java.util.Date;
 import java.util.HashSet;
 
 @RestController
-@SecurityRequirement(name = "Bearer Authentication")
 @Tag(description = "API Servicios de Authentication", name = "Auth")
 public class AuthRestController extends BaseRestController {
     @Autowired
@@ -54,7 +53,7 @@ public class AuthRestController extends BaseRestController {
             @ApiResponse(responseCode = "401", description = "No autorizado."),
     })
     @PostMapping(value = Constants.URL_LOGIN, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<?> loginExternalOnlyToken(@RequestParam(value = "username") String username,
+    public ResponseEntity<?> loginExternalOnlyToken(@Parameter(description = "username or email") @RequestParam(value = "username") String username,
                                                     @RequestParam(value = "password") String password,
                                                     @Parameter(hidden = true) //parametro oculto, no me acuerdo para q era!
                                                         @RequestParam(value = "json", defaultValue = "false") Boolean json) {
@@ -91,6 +90,12 @@ public class AuthRestController extends BaseRestController {
     }
 
     @SneakyThrows
+    @Operation(operationId = "auth-register", summary = "Este servicio registra un usuario.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Usuario registrado correctamente."),
+            @ApiResponse(responseCode = "409", description = "Conflict"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PostMapping(value = Constants.URL_REGISTER, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody User user) {
         try {

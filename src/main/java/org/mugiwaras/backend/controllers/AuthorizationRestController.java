@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.mugiwaras.backend.auth.IUserBusiness;
 import org.mugiwaras.backend.auth.User;
 import org.mugiwaras.backend.controllers.constants.Constants;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Hidden // TODO: *************************ESTO ESTA OCULTO, VER QUE ONDA!!*********************************************************
 @RequestMapping(Constants.URL_AUTHORIZATION)
 public class AuthorizationRestController extends BaseRestController {
 
