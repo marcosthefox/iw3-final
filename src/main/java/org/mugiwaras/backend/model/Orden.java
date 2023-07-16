@@ -1,5 +1,6 @@
 package org.mugiwaras.backend.model;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -21,7 +22,8 @@ public class Orden implements Serializable {
     @Id
     private long numeroOrden;
 
-    @Column(nullable = false , unique = true)
+    //TODO: ***************************************** VER esto q ond!! ************************************
+    @Column(nullable = false, unique = true)
     private String CodigoExterno;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -40,7 +42,8 @@ public class Orden implements Serializable {
     @JoinColumn(name = "id_producto")
     private Producto producto;
 
-    @OneToMany(mappedBy = "orden",fetch = FetchType.EAGER)
+    @Hidden
+    @OneToMany(mappedBy = "orden", fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Detalle> detalle;
 
@@ -51,42 +54,49 @@ public class Orden implements Serializable {
     @Column(name = "fecha_turno_carga")
     private OffsetDateTime fechaTurnoCarga;
 
+    @Hidden
     @Column(name = "fecha_pesaje_inicial")
     private OffsetDateTime fechaPesajeInicial;
 
+    @Hidden
     @Column(name = "estado")
     private int estado;
 
+    @Hidden
     @Column(name = "tara")
     private long tara;
 
+    @Hidden
     @Column(name = "password")
     private long password;
 
     //Ultimos valores medidos del detalle de carga
-    @Column(name="ultima_masa")
+    @Hidden
+    @Column(name = "ultima_masa")
     private float ultimaMasa;
-    @Column(name="ultima_densidad")
+    @Hidden
+    @Column(name = "ultima_densidad")
     private float ultimaDensidad;
-    @Column(name="ultima_temperatura")
+    @Hidden
+    @Column(name = "ultima_temperatura")
     private float ultimaTemperatura;
-    @Column(name="ultimo_caudal")
+    @Hidden
+    @Column(name = "ultimo_caudal")
     private float ultimoCaudal;
 
+    @Hidden
     @Column(name = "pesaje_final")
     private long pesajeFinal;
 
-
+    @Hidden
     @Column(name = "fecha_pesaje_final")
     private OffsetDateTime fechaPesajeFinal;
 
+    @Hidden
     @Column(name = "fecha_detalle_final")
     private OffsetDateTime fechaDetalleFinal;
 
+    @Hidden
     @Column(name = "fecha_detalle_inicial")
     private OffsetDateTime fechaDetalleInicial;
-
-
-
-
 }

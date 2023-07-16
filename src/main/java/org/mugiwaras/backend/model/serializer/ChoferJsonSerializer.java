@@ -21,6 +21,7 @@ public class ChoferJsonSerializer extends StdSerializer<Chofer> {
         jsonGenerator.writeNumberField("dni", chofer.getDni());
         jsonGenerator.writeStringField("nombre", chofer.getNombre());
         jsonGenerator.writeStringField("apellido", chofer.getApellido());
+        jsonGenerator.writeStringField("code", chofer.getCode());
         jsonGenerator.writeEndObject();
     }
 }

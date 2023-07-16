@@ -53,7 +53,7 @@ public class CamionBusiness implements ICamionBusiness {
     public Camion add(Camion camion) throws FoundException, BusinessException, NotFoundException {
         try {
             if (camionRepository.existsByCode(camion.getCode())) {
-                return load(camion.getPatente());
+                return load(camion.getCode());
             }
         } catch (NotFoundException e) {
         }

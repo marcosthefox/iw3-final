@@ -2,6 +2,7 @@ package org.mugiwaras.backend.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class Detalle implements Serializable {
 
     private static final long serialVersionUID = 4501343898075848117L;
 
+    @Hidden
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -41,6 +43,7 @@ public class Detalle implements Serializable {
     @Column(name = "caudal")
     private float caudal;
 
+    @Hidden
     @Column(name="fecha_detalle")
     private OffsetDateTime fechaDetalle;
 

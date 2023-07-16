@@ -30,6 +30,7 @@ public class CamionJsonSerializer extends StdSerializer<Camion> {
         jsonGenerator.writeRawValue(cisterna);
 
         jsonGenerator.writeNumberField("totalCisterna", camion.getTotalCisterna());
+        jsonGenerator.writeStringField("code", camion.getCode());
         jsonGenerator.writeEndObject();
 
     }

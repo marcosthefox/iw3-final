@@ -19,7 +19,10 @@ import org.mugiwaras.backend.model.business.exceptions.NotAuthorizedException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.IDetalleBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
-import org.mugiwaras.backend.model.serializer.*;
+import org.mugiwaras.backend.model.serializer.DetalleJsonSerializer;
+import org.mugiwaras.backend.model.serializer.OrdenCierreJsonSerializer;
+import org.mugiwaras.backend.model.serializer.OrdenJsonSerializer;
+import org.mugiwaras.backend.model.serializer.OrdenPassJsonSerializer;
 import org.mugiwaras.backend.util.JsonUtiles;
 import org.mugiwaras.backend.util.StandartResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +38,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class OrdenController extends BaseRestController {
 
-
     @Autowired
     private IOrdenBusiness ordenBusiness;
     @Autowired
@@ -49,7 +51,7 @@ public class OrdenController extends BaseRestController {
     }
 
     @SneakyThrows
-    @Operation(operationId = "inicio", summary = "Este servicio crea una Orden. (1)")
+    @Operation(operationId = "inicio", summary = "(1) Este servicio crea una Orden. Deja la orden en ESTADO 1.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Orden creada correctamente.", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = Orden.class))}),
@@ -69,7 +71,7 @@ public class OrdenController extends BaseRestController {
     }
 
     @SneakyThrows
-    @Operation(operationId = "b2b", summary = "Este servicio crea una Orden a partir de codigos externos de las entidades.")
+    @Operation(operationId = "b2b", summary = "Este servicio crea una Orden a partir de codigos externos de las entidades. Deja la orden en ESTADO 1.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Orden creada correctamente.", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = Orden.class))}),
@@ -78,7 +80,8 @@ public class OrdenController extends BaseRestController {
             @ApiResponse(responseCode = "403", description = "Forbidden"),
     })
     @PostMapping(value = "/b2b", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addExternal(@RequestBody String json) {
+    public ResponseEntity<?> addExternal(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Entidades:  numeroOrden, camion, chofer, cliente, producto, preset, fechaTurnoCarga.")
+                                         @RequestBody String json) {
         StdSerializer<Orden> ser = new OrdenJsonSerializer(Orden.class, false);
         try {
             String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.addExternal(json));
@@ -89,7 +92,7 @@ public class OrdenController extends BaseRestController {
     }
 
     @SneakyThrows
-    @Operation(operationId = "checkin", summary = "Este servicio hace el check-in de una Orden. (2)")
+    @Operation(operationId = "checkin", summary = "(2) Este servicio hace el check-in de una Orden. Deja la orden en ESTADO 2.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna una password."),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -97,7 +100,9 @@ public class OrdenController extends BaseRestController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))})
     })
     @PutMapping(value = "/checkin", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> checkIn(@RequestBody String tara, @RequestHeader(name = "Numero-Orden") long numeroOrden) {
+    public ResponseEntity<?> checkIn(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Proveer el pesaje_inicial (int).")
+                                     @RequestBody String tara,
+                                     @RequestHeader(name = "Numero-Orden") long numeroOrden) {
         StdSerializer<Orden> ser = new OrdenPassJsonSerializer(Orden.class, false);
         try {
             String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.checkIn(tara, numeroOrden));
@@ -108,9 +113,10 @@ public class OrdenController extends BaseRestController {
     }
 
     @SneakyThrows
-    @Operation(operationId = "detalle", summary = "Este servicio provee el detalle de una medicion. (3)")
+    @Operation(operationId = "detalle", summary = "(3) Este servicio provee el detalle de una medicion.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Detalle generado correctamente"),
+            @ApiResponse(responseCode = "201", description = "Detalle generado correctamente", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Detalle.class))}),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
@@ -133,10 +139,9 @@ public class OrdenController extends BaseRestController {
     }
 
     @SneakyThrows
-    @Operation(operationId = "cierre-orden", summary = "Este servicio cierra una orden. (4)")
+    @Operation(operationId = "cierre-orden", summary = "(4) Este servicio cierra una orden. Deja la orden en ESTADO 3.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Orden cerrada corectamente.", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = Orden.class))}),
+            @ApiResponse(responseCode = "200", description = "Orden cerrada corectamente."),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))})
@@ -154,21 +159,22 @@ public class OrdenController extends BaseRestController {
     }
 
     @SneakyThrows
-    @Operation(operationId = "checkout", summary = "Este servicio hace el checkout de una orden. (5)")
+    @Operation(operationId = "checkout", summary = "(5) Este servicio hace el checkout de una orden y recibe el pesaje final del camion. Deja la orden en ESTADO 4.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Checkout realizado correctamente"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PutMapping(value = "/checkout", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> checkOut(@RequestBody String pesajeFinal, @RequestHeader(name = "Numero-Orden") long numeroOrden) {
+    public ResponseEntity<?> checkOut(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Proveer el pesaje_final (int).")
+                                      @RequestBody String pesajeFinal,
+                                      @RequestHeader(name = "Numero-Orden") long numeroOrden) {
         return new ResponseEntity<>(ordenBusiness.checkOut(pesajeFinal, numeroOrden), HttpStatus.OK);
     }
 
     @SneakyThrows
-    @Operation(operationId = "conciliacion", summary = "Este servicio devuelve una conciliacion de la orden. (6)")
+    @Operation(operationId = "conciliacion", summary = "(6) Este servicio devuelve una conciliacion de la orden. Solo para ordenes en estado 4.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Conciliacion retornada correctamente.", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ConciliacionSerializer.class))}),
+            @ApiResponse(responseCode = "200", description = "Conciliacion retornada correctamente."),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))})

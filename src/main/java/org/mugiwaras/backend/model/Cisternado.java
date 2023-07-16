@@ -27,7 +27,7 @@ public class Cisternado implements Serializable {
     private long id_cisterna;
 
     @ManyToOne
-    @JoinColumn(name = "id_camion")
+    @JoinColumn(name = "patente")
     @JsonIgnore
     private Camion camion;
 

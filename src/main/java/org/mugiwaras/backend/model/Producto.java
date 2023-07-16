@@ -1,10 +1,11 @@
 package org.mugiwaras.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.v3.oas.annotations.Hidden;
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
@@ -18,10 +19,7 @@ public class Producto implements Serializable {
 
     private static final long serialVersionUID = -2510094698283791123L;
 
-    @Hidden
-    @JsonIgnore
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "nombre")

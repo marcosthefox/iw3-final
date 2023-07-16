@@ -20,6 +20,7 @@ public class ClienteJsonSerializer extends StdSerializer<Cliente> {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("razonSocial", cliente.getRazonSocial());
         jsonGenerator.writeNumberField("contacto", cliente.getContacto());
+        jsonGenerator.writeStringField("code", cliente.getCode());
         jsonGenerator.writeEndObject();
     }
 }
