@@ -23,12 +23,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(Constants.URL_CAMION)
 @SecurityRequirement(name = "Bearer Authentication")
-@Tag(description = "API Servicios de la entidad Camion", name = "Camion")
+@Tag(description = "API Servicios de la entidad Camion. Es necesario tener ROLE_ADMIN.", name = "Camion")
 @RequiredArgsConstructor
 public class CamionController extends BaseRestController {
 
@@ -74,6 +75,7 @@ public class CamionController extends BaseRestController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/buscar/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> get(@PathVariable("code") String code) {
         try {
@@ -95,6 +97,7 @@ public class CamionController extends BaseRestController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody Camion camion) {
         try {

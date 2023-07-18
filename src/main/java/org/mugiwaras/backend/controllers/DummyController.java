@@ -14,6 +14,7 @@ import org.mugiwaras.backend.util.StandartResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,12 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(Constants.URL_DUMMY)
 @SecurityRequirement(name = "Bearer Authentication")
-@Tag(description = "API Servicios Dummy", name = "Dummy")
+@Tag(description = "API Servicios Dummy. No necesita ROLES para ser consumido.", name = "Dummy")
 @RequiredArgsConstructor
 public class DummyController extends BaseRestController {
 
     @SneakyThrows
-    @Operation(operationId = "dummy", summary = "Este servicio comprueba el servicio de login")
+    @Operation(operationId = "dummy", summary = "Este servicio comprueba el servicio de login.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Authorized successful"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),

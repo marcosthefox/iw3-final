@@ -1,15 +1,24 @@
 package org.mugiwaras.backend.controllers;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.mugiwaras.backend.auth.IUserBusiness;
 import org.mugiwaras.backend.auth.User;
 import org.mugiwaras.backend.controllers.constants.Constants;
+import org.mugiwaras.backend.util.StandartResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,35 +31,45 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Hidden // TODO: *************************ESTO ESTA OCULTO, VER QUE ONDA!!*********************************************************
+@SecurityRequirement(name = "Bearer Authentication")
+@Tag(description = "API Servicios de Authorizacion.", name = "Authorization")
 @RequestMapping(Constants.URL_AUTHORIZATION)
 public class AuthorizationRestController extends BaseRestController {
 
+    @Hidden
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin")
     public ResponseEntity<String> onlyAdmin() {
         return new ResponseEntity<String>("Servicio admin", HttpStatus.OK);
     }
 
+    @Hidden
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/user")
     public ResponseEntity<String> onlyUser() {
         return new ResponseEntity<String>("Servicio user", HttpStatus.OK);
     }
 
+    @Hidden
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @GetMapping("/user-or-admin")
     public ResponseEntity<String> rolUserOArdmin() {
         return new ResponseEntity<String>("Servicio user or admin", HttpStatus.OK);
     }
 
-    ////Se compara con los datos de entrada
+    //TODO: ************************** este endpoint deberia estar!! ***************************************
+    @Operation(operationId = "my-rols", summary = "Este servicio retorna los roles que posee el usuario.")
+    @Parameter(in = ParameterIn.QUERY, name = "username", schema = @Schema(type = "string"), required = true, description = "Nombre del usuario.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna un arreglo con los roles."),
+            @ApiResponse(responseCode = "403", description = "Forbidden")})
     @PreAuthorize("#username == authentication.principal.username")
     @GetMapping("/my-rols")
     public ResponseEntity<String> myRols(@RequestParam("username") String username) {
         return new ResponseEntity<String>(getUserLogged().getAuthorities().toString(), HttpStatus.OK);
     }
 
+    @Hidden
     @GetMapping("/variable")
     public ResponseEntity<String> variable(HttpServletRequest request) {
         if (request.isUserInRole("ROLE_ADMIN")) {
@@ -60,7 +79,15 @@ public class AuthorizationRestController extends BaseRestController {
         }
     }
 
-    //Se compara con los datos de respuesta
+    //Deuelve toda la data de ese usuario.
+    //TODO: ************************** este endpoint deberia estar!! ***************************************
+    @Operation(operationId = "full-data", summary = "Este servicio retorna las caaracteristicas del usuario logueado.")
+    @Parameter(in = ParameterIn.QUERY, name = "username", schema = @Schema(type = "string"), required = true, description = "Nombre del usuario.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna un objeto User.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))}),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
     @PostAuthorize("returnObject.username == #username")
     @GetMapping("/full-data")
     public User fullData(@RequestParam("username") String username) {
@@ -71,6 +98,7 @@ public class AuthorizationRestController extends BaseRestController {
     private IUserBusiness userBusiness;
 
     //El user actual no figura en la lista
+    @Hidden
     @PostFilter("filterObject != authentication.principal.username")
     @GetMapping("/self-filter")
     public List<String> selfFilter() {

@@ -40,7 +40,7 @@ import java.util.Date;
 import java.util.HashSet;
 
 @RestController
-@Tag(description = "API Servicios de Authentication", name = "Auth")
+@Tag(description = "API Servicios de Authentication. No necesita ROLES para ser consumido.", name = "Auth")
 public class AuthRestController extends BaseRestController {
     @Autowired
     private IUserBusiness userBusiness;

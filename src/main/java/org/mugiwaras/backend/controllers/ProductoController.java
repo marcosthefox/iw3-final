@@ -25,12 +25,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(Constants.URL_PRODUCTO)
 @SecurityRequirement(name = "Bearer Authentication")
-@Tag(description = "API Servicios de la entidad Producto", name = "Producto")
+@Tag(description = "API Servicios de la entidad Producto. Es necesario tener ROLE_ADMIN.", name = "Producto")
 @RequiredArgsConstructor
 public class ProductoController extends BaseRestController{
 
@@ -47,6 +48,7 @@ public class ProductoController extends BaseRestController{
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody Producto producto) {
         try {
@@ -73,6 +75,7 @@ public class ProductoController extends BaseRestController{
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/buscar/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> get(@PathVariable("code") String code){
         try {

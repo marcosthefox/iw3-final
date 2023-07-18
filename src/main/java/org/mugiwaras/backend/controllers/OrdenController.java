@@ -29,12 +29,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(Constants.URL_ORDEN)
 @SecurityRequirement(name = "Bearer Authentication")
-@Tag(description = "API Servicios de la entidad Orden", name = "Orden")
+@Tag(description = "API Servicios de la entidad Orden. Es necesario tener ROLE_ADMIN.", name = "Orden")
 @RequiredArgsConstructor
 public class OrdenController extends BaseRestController {
 
@@ -59,6 +60,7 @@ public class OrdenController extends BaseRestController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/inicio", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody Orden orden) {
         StdSerializer<Orden> ser = new OrdenJsonSerializer(Orden.class, false);
@@ -79,6 +81,7 @@ public class OrdenController extends BaseRestController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/b2b", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addExternal(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Entidades:  numeroOrden, camion, chofer, cliente, producto, preset, fechaTurnoCarga.")
                                          @RequestBody String json) {
@@ -99,6 +102,7 @@ public class OrdenController extends BaseRestController {
             @ApiResponse(responseCode = "404", description = "Not found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))})
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/checkin", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> checkIn(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Proveer el pesaje_inicial (int).")
                                      @RequestBody String tara,
@@ -123,6 +127,7 @@ public class OrdenController extends BaseRestController {
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))})
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/detalle", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> detalles(@RequestBody Detalle detalle,
                                       @RequestHeader(name = "Numero-Orden") long numeroOrden,
@@ -146,6 +151,7 @@ public class OrdenController extends BaseRestController {
             @ApiResponse(responseCode = "404", description = "Not found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))})
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/cierre/orden", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> close(@RequestHeader(name = "Numero-Orden") long numeroOrden) {
         StdSerializer<Orden> ser = new OrdenCierreJsonSerializer(Orden.class, false);
@@ -164,6 +170,7 @@ public class OrdenController extends BaseRestController {
             @ApiResponse(responseCode = "200", description = "Checkout realizado correctamente"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/checkout", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> checkOut(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Proveer el pesaje_final (int).")
                                       @RequestBody String pesajeFinal,
@@ -179,6 +186,7 @@ public class OrdenController extends BaseRestController {
             @ApiResponse(responseCode = "404", description = "Not found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))})
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/conciliacion", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> checkOut(@RequestHeader(name = "Numero-Orden") long numeroOrden) {
         try {
