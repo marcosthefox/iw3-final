@@ -15,20 +15,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.SneakyThrows;
+import org.mugiwaras.backend.auth.IRoleBusiness;
 import org.mugiwaras.backend.auth.IUserBusiness;
+import org.mugiwaras.backend.auth.Role;
 import org.mugiwaras.backend.auth.User;
 import org.mugiwaras.backend.controllers.constants.Constants;
+import org.mugiwaras.backend.model.business.exceptions.BusinessException;
+import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.util.StandartResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @SecurityRequirement(name = "Bearer Authentication")
@@ -112,4 +116,24 @@ public class AuthorizationRestController extends BaseRestController {
         return r;
     }
 
+    @Autowired
+    private IRoleBusiness roleBusiness;
+    @SneakyThrows
+    @PostMapping(value = "/add-role", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addRole(@RequestParam String username, @RequestBody Role role) {
+        try {
+            User user = userBusiness.load(username);
+            Role rol = roleBusiness.add(role);
+            user.getRoles().add(rol);
+            userBusiness.add(user);
+
+            HttpHeaders responseHeaders = new HttpHeaders();
+            return new ResponseEntity<>(user, responseHeaders, HttpStatus.CREATED);
+        }
+        catch(NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch(BusinessException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
 }

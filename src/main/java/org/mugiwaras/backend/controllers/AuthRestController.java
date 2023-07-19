@@ -12,9 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
-import org.mugiwaras.backend.auth.IUserBusiness;
-import org.mugiwaras.backend.auth.User;
-import org.mugiwaras.backend.auth.UserJsonSerializer;
+import org.mugiwaras.backend.auth.*;
 import org.mugiwaras.backend.auth.custom.CustomAuthenticationManager;
 import org.mugiwaras.backend.auth.filter.AuthConstants;
 import org.mugiwaras.backend.controllers.constants.Constants;
@@ -38,12 +36,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @Tag(description = "API Servicios de Authentication. No necesita ROLES para ser consumido.", name = "Auth")
 public class AuthRestController extends BaseRestController {
     @Autowired
     private IUserBusiness userBusiness;
+
     @Autowired
     private AuthenticationManager authManager;
 
@@ -110,4 +110,6 @@ public class AuthRestController extends BaseRestController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
+
+
 }
