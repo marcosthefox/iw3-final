@@ -14,6 +14,7 @@ import lombok.SneakyThrows;
 import org.mugiwaras.backend.controllers.constants.Constants;
 import org.mugiwaras.backend.model.Detalle;
 import org.mugiwaras.backend.model.Orden;
+import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotAuthorizedException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
@@ -119,8 +120,7 @@ public class OrdenController extends BaseRestController {
     @SneakyThrows
     @Operation(operationId = "detalle", summary = "(3) Este servicio provee el detalle de una medicion.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Detalle generado correctamente", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = Detalle.class))}),
+            @ApiResponse(responseCode = "200", description = "Detalle recibido. Los detalles se guardan cada 2 minutos."),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
@@ -134,11 +134,13 @@ public class OrdenController extends BaseRestController {
                                       @RequestHeader(name = "Password") int password) {
         StdSerializer<Detalle> ser = new DetalleJsonSerializer(Detalle.class, false);
         try {
-            String result = JsonUtiles.getObjectMapper(Detalle.class, ser, null).writeValueAsString(detalleBusiness.add(detalle, numeroOrden, password));
-            return new ResponseEntity<>(result, HttpStatus.CREATED);
+//            String result = JsonUtiles.getObjectMapper(Detalle.class, ser, null).writeValueAsString(detalleBusiness.add(detalle, numeroOrden, password));
+//            return new ResponseEntity<>(result, HttpStatus.CREATED);
+            detalleBusiness.procesarDetalle(detalle, numeroOrden, password);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAuthorizedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

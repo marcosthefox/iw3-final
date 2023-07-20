@@ -1,21 +1,28 @@
 package org.mugiwaras.backend.model.business.interfaces;
 
 import org.mugiwaras.backend.model.Detalle;
+import org.mugiwaras.backend.model.DetalleReciente;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
-import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotAuthorizedException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IDetalleBusiness {
-    public Detalle load(long id) throws BusinessException, NotFoundException;
+    Detalle load(long id) throws BusinessException, NotFoundException;
 
     @Nullable
-    public List<Detalle> list() throws BusinessException;
+    List<Detalle> list() throws BusinessException;
 
-    Detalle add(Detalle detalle,long numeroOrden,int password) throws FoundException, BusinessException, NotFoundException, NotAuthorizedException;
+    void add(Detalle detalle, long numeroOrden) throws BusinessException;
 
-    public List<Detalle> listByNumeroOrden(long numeroOrden) throws BusinessException;
+    List<Detalle> listByNumeroOrden(long numeroOrden) throws BusinessException;
+
+    void procesarDetalle(Detalle detalle, long numeroOrden, int password) throws NotFoundException, BusinessException, NotAuthorizedException;
+
+    Map<Long, DetalleReciente> getOrdenes();
+
+    void borrarMapaOrdenes();
 }
