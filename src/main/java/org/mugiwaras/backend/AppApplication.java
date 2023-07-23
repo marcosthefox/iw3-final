@@ -3,6 +3,9 @@ package org.mugiwaras.backend;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.extern.slf4j.Slf4j;
+import org.mugiwaras.backend.util.EmailBusiness;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,9 +30,7 @@ public class AppApplication extends SpringBootServletInitializer implements Comm
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("************** ADMIN PASS ***************");
-        System.out.println(BCrypt.hashpw("admin", BCrypt.gensalt()));
-        System.out.println("************** USER PASS ***************");
-        System.out.println(BCrypt.hashpw("user", BCrypt.gensalt()));
+//        System.out.println("************** ADMIN PASS ***************");
+//        System.out.println(BCrypt.hashpw("admin", BCrypt.gensalt()));
     }
 }

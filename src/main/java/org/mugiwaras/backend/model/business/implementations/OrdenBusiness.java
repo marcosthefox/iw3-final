@@ -204,4 +204,15 @@ public class OrdenBusiness implements IOrdenBusiness {
         return ordenRepository.save(orden);
     }
 
+    @Override
+    public void aceptarAlarma(long numeroOrden) throws BusinessException {
+        Orden orden;
+        try {
+            orden = load(numeroOrden);
+        } catch (Exception e) {
+            throw BusinessException.builder().message("Error al cargar la orden").build();
+        }
+        orden.setAlarma(false);
+        ordenRepository.save(orden);
+    }
 }

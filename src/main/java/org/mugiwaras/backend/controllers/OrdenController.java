@@ -181,7 +181,6 @@ public class OrdenController extends BaseRestController {
         } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-
     }
 
     @SneakyThrows
@@ -216,4 +215,22 @@ public class OrdenController extends BaseRestController {
         }
     }
 
+    @SneakyThrows
+    @Operation(operationId = "aceptar-alarma", summary = "Este servicio acepta la alarma de envio de mails.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Alarma aceptada corectamente para una orden."),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))})
+    })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping(value = "/aceptar-alarma", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> aceptarAlarma(@RequestHeader(name = "Numero-Orden") long numeroOrden) {
+        try {
+            ordenBusiness.aceptarAlarma(numeroOrden);
+            return new ResponseEntity<>("Alarma aceptada para orden con numero: " + numeroOrden, HttpStatus.OK);
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

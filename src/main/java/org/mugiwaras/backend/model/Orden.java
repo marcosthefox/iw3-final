@@ -70,6 +70,10 @@ public class Orden implements Serializable {
     @Column(name = "password")
     private long password;
 
+    @Hidden
+    @Column(name = "alarma")
+    private boolean alarma; //indica si la alarma de la temperatura para una orden fue aceptada o no.
+
     //Ultimos valores medidos del detalle de carga
     @Hidden
     @Column(name = "ultima_masa")

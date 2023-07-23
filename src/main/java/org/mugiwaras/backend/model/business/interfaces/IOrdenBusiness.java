@@ -24,4 +24,6 @@ public interface IOrdenBusiness {
     String checkOut(String json, long numeroOrden) throws NotFoundException, BusinessException, JsonProcessingException;
 
     String conciliacion(long numeroOrden) throws NotFoundException, JsonProcessingException, BusinessException;
+
+    void aceptarAlarma(long numeroOrden) throws BusinessException;
 }
