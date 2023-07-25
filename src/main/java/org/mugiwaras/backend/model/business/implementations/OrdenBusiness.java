@@ -19,6 +19,7 @@ import org.mugiwaras.backend.model.deserealizer.OrdenExternaDeserealizer;
 import org.mugiwaras.backend.model.persistence.OrdenRepository;
 import org.mugiwaras.backend.model.serializer.ConciliacionSerializer;
 import org.mugiwaras.backend.util.JsonUtiles;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -31,13 +32,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrdenBusiness implements IOrdenBusiness {
 
-    private final DetalleBusiness detalleBusiness;
-    private final OrdenRepository ordenRepository;
-    private final CamionBusiness camionBusiness;
-    private final ChoferBusiness choferBusiness;
-    private final CisternadoBusiness cisternadoBusiness;
-    private final ClienteBusiness clienteBusiness;
-    private final ProductoBusiness productoBusiness;
+    @Autowired
+    private DetalleBusiness detalleBusiness;
+    @Autowired
+    private OrdenRepository ordenRepository;
+    @Autowired
+    private CamionBusiness camionBusiness;
+    @Autowired
+    private ChoferBusiness choferBusiness;
+    @Autowired
+    private CisternadoBusiness cisternadoBusiness;
+    @Autowired
+    private ClienteBusiness clienteBusiness;
+    @Autowired
+    private ProductoBusiness productoBusiness;
 
     @Override
     public String checkOut(String json, long numeroOrden) throws NotFoundException, BusinessException, JsonProcessingException {
@@ -74,14 +82,12 @@ public class OrdenBusiness implements IOrdenBusiness {
     @Override
     public String conciliacion(long numeroOrden) throws NotFoundException, JsonProcessingException, BusinessException {
         Orden orden = load(numeroOrden);
-        ;
         if (orden.getEstado() == 4) {
             StdSerializer<Orden> ser = new ConciliacionSerializer(Orden.class, detalleBusiness);
             return JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(orden);
         } else {
             throw BusinessException.builder().message("Error, realize primero el check-out ").build();
         }
-
     }
 
 
@@ -112,10 +118,10 @@ public class OrdenBusiness implements IOrdenBusiness {
 
     @Override
     public Orden add(Orden orden) throws BusinessException, FoundException, NotFoundException {
-        try {
-            load(orden.getNumeroOrden());
+        //            load(orden.getNumeroOrden());
+        Optional<Orden> r = ordenRepository.findByNumeroOrden(orden.getNumeroOrden());
+        if (r.isEmpty()){
             throw FoundException.builder().message("Ya hay una orden con el nro " + orden.getNumeroOrden()).build();
-        } catch (NotFoundException e) {
         }
         Camion camion;
         try {
@@ -131,10 +137,25 @@ public class OrdenBusiness implements IOrdenBusiness {
                 camion = camionBusiness.add(orden.getCamion());
                 orden.setCamion(camion);
             }
-
+        } catch (Exception e) {
+            throw BusinessException.builder().message("Error al crear el camion, en orden.").build();
+        }
+        try {
             choferBusiness.add(orden.getChofer());
+        } catch (Exception e) {
+            throw BusinessException.builder().message("Error al crear el chofer, en orden.").build();
+        }
+        try {
             clienteBusiness.add(orden.getCliente());
+        } catch (Exception e) {
+            throw BusinessException.builder().message("Error al crear el cliente, en orden.").build();
+        }
+        try {
             productoBusiness.add(orden.getProducto());
+        } catch (Exception e) {
+            throw BusinessException.builder().message("Error al crear el producto, en orden.").build();
+        }
+        try {
             orden.setEstado(1);
             if (orden.getCodigoExterno() == null) {
                 orden.setCodigoExterno(System.currentTimeMillis() + "");
@@ -142,7 +163,7 @@ public class OrdenBusiness implements IOrdenBusiness {
 
             return ordenRepository.save(orden);
         } catch (Exception e) {
-            throw BusinessException.builder().message("Error creacion de la orden").build();
+            throw BusinessException.builder().message("Error en creacion de la orden.").build();
         }
 
     }

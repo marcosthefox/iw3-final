@@ -195,35 +195,35 @@
 			</plugin>
 
 			<!-- Pitest Maven Plugin -->
-<!--			<plugin>-->
-<!--				<groupId>org.pitest</groupId>-->
-<!--				<artifactId>pitest-maven</artifactId>-->
-<!--				<version>1.6.6</version>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<id>pit-report</id>-->
-<!--						<phase>test</phase>-->
-<!--						<goals>-->
-<!--							<goal>mutationCoverage</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--				<configuration>-->
-<!--					<targetClasses>-->
-<!--					<param>org.mugiwaras.backend.model.business.implementations.*</param>-->
-<!--					</targetClasses>-->
-<!--					<targetTests>-->
-<!--						<param>org.mugiwaras.backend.model.business.implementations.*</param>-->
-<!--					</targetTests>-->
-<!--				</configuration>-->
-<!--				<dependencies>-->
-<!--					<dependency>-->
-<!--						<groupId>org.pitest</groupId>-->
-<!--						<artifactId>pitest-junit5-plugin</artifactId>-->
-<!--						<version>0.12</version>-->
-<!--					</dependency>-->
-<!--				</dependencies>-->
-<!--			</plugin>-->
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.6.6</version>
+				<executions>
+					<execution>
+						<id>pit-report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>mutationCoverage</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<targetClasses>
+					<param>org.mugiwaras.backend.model.business.implementations.*</param>
+					</targetClasses>
+					<targetTests>
+						<param>org.mugiwaras.backend.model.business.implementations.*</param>
+					</targetTests>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-junit5-plugin</artifactId>
+						<version>0.12</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 		</plugins>
 	</build>
 
