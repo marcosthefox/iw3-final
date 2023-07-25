@@ -42,7 +42,7 @@ public class ClienteBusiness implements IClienteBusiness {
             return clienteRepository.findAll();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw BusinessException.builder().ex(e).build();
+            throw BusinessException.builder().message("Error al traer lista de Clientes.").build();
         }
     }
 

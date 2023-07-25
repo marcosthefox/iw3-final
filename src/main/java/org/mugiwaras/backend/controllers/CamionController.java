@@ -112,4 +112,21 @@ public class CamionController extends BaseRestController {
         }
     }
 
+    @SneakyThrows
+    @Operation(operationId = "find-all", summary = "Este servicio devuelve una lista de todos los camiones.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de camiones retornada correctamente."),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+    })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping(value = "/find-all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> findAll() {
+        try {
+            return new ResponseEntity<>(camionBusiness.list(), HttpStatus.OK);
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

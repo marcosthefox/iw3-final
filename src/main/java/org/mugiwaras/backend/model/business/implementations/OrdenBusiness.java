@@ -106,7 +106,7 @@ public class OrdenBusiness implements IOrdenBusiness {
             return ordenRepository.findAll();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw BusinessException.builder().message("Error al traer las ordenes.").build();
+            throw BusinessException.builder().message("Error al traer lista de las Ordenes.").build();
         }
     }
 

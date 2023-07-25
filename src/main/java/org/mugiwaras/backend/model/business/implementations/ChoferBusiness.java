@@ -42,7 +42,7 @@ public class ChoferBusiness implements IChoferBusiness {
             return choferRepository.findAll();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw BusinessException.builder().ex(e).build();
+            throw BusinessException.builder().message("Error al traer todos los Choferes.").build();
         }
 
     }

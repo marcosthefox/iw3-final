@@ -46,7 +46,11 @@ public class CamionBusiness implements ICamionBusiness {
 
     @Override
     public List<Camion> list() throws BusinessException {
-        return null;
+        try {
+            return camionRepository.findAll();
+        } catch (Exception e) {
+            throw BusinessException.builder().message("Error al traer todos los Camiones.").build();
+        }
     }
 
     @Override
