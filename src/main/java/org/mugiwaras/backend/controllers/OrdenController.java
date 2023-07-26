@@ -125,7 +125,7 @@ public class OrdenController extends BaseRestController {
     @PutMapping(value = "/checkin", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> checkIn(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Proveer el pesaje_inicial (int).")
                                      @RequestBody String tara,
-                                     @RequestHeader(name = "Numero-Orden") long numeroOrden) {
+                                     @RequestHeader(name = "NumeroOrden") long numeroOrden) {
         StdSerializer<Orden> ser = new OrdenPassJsonSerializer(Orden.class, false);
         try {
             String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.checkIn(tara, numeroOrden));
@@ -148,7 +148,7 @@ public class OrdenController extends BaseRestController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/detalle", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> detalles(@RequestBody Detalle detalle,
-                                      @RequestHeader(name = "Numero-Orden") long numeroOrden,
+                                      @RequestHeader(name = "NumeroOrden") long numeroOrden,
                                       @RequestHeader(name = "Password") int password) {
         StdSerializer<Detalle> ser = new DetalleJsonSerializer(Detalle.class, false);
         try {
@@ -173,7 +173,7 @@ public class OrdenController extends BaseRestController {
     })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/cierre/orden", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> close(@RequestHeader(name = "Numero-Orden") long numeroOrden) {
+    public ResponseEntity<?> close(@RequestHeader(name = "NumeroOrden") long numeroOrden) {
         StdSerializer<Orden> ser = new OrdenCierreJsonSerializer(Orden.class, false);
         try {
             String result = JsonUtiles.getObjectMapper(Orden.class, ser, null).writeValueAsString(ordenBusiness.closeOrder(numeroOrden));
@@ -193,7 +193,7 @@ public class OrdenController extends BaseRestController {
     @PutMapping(value = "/checkout", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> checkOut(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Proveer el pesaje_final (int).")
                                       @RequestBody String pesajeFinal,
-                                      @RequestHeader(name = "Numero-Orden") long numeroOrden) {
+                                      @RequestHeader(name = "NumeroOrden") long numeroOrden) {
         return new ResponseEntity<>(ordenBusiness.checkOut(pesajeFinal, numeroOrden), HttpStatus.OK);
     }
 
@@ -207,7 +207,7 @@ public class OrdenController extends BaseRestController {
     })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/conciliacion", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> checkOut(@RequestHeader(name = "Numero-Orden") long numeroOrden) {
+    public ResponseEntity<?> checkOut(@RequestHeader(name = "NumeroOrden") long numeroOrden) {
         try {
             return new ResponseEntity<>(ordenBusiness.conciliacion(numeroOrden), HttpStatus.OK);
         } catch (NotFoundException e) {
@@ -225,7 +225,7 @@ public class OrdenController extends BaseRestController {
     })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/aceptar-alarma", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> aceptarAlarma(@RequestHeader(name = "Numero-Orden") long numeroOrden) {
+    public ResponseEntity<?> aceptarAlarma(@RequestHeader(name = "NumeroOrden") long numeroOrden) {
         try {
             ordenBusiness.aceptarAlarma(numeroOrden);
             return new ResponseEntity<>("Alarma aceptada para orden con numero: " + numeroOrden, HttpStatus.OK);
@@ -244,7 +244,7 @@ public class OrdenController extends BaseRestController {
     })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/temperatura-umbral/{temperatura}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> setTemperaturaUmbral(@RequestHeader(name = "Numero-Orden") long numeroOrden,
+    public ResponseEntity<?> setTemperaturaUmbral(@RequestHeader(name = "NumeroOrden") long numeroOrden,
                                                   @PathVariable float temperatura) {
         try {
             ordenBusiness.setTemperaturaUmbral(numeroOrden, temperatura);
