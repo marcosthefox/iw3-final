@@ -1,25 +1,37 @@
 package org.mugiwaras.backend.controllers;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.SneakyThrows;
 import org.mugiwaras.backend.controllers.constants.Constants;
 import org.mugiwaras.backend.model.Mail;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.FoundException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.business.interfaces.IMailBusiness;
+import org.mugiwaras.backend.util.StandartResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @SecurityRequirement(name = "Bearer Authentication")
+@Tag(description = "API Servicios de la entidad Mail. Es necesario tener ROLE_ADMIN.", name = "Mail")
 @RequestMapping(Constants.URL_MAIL)
 public class MailController {
     @Autowired
     private IMailBusiness mailBusiness;
 
+    @Hidden
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> load(@PathVariable("id") long id) {
         try {
@@ -31,6 +43,15 @@ public class MailController {
         }
     }
 
+    @SneakyThrows
+    @Operation(operationId = "list", summary = "Este servicio devuelve una lista de todas los Mail.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de Mail retornada correctamente."),
+            @ApiResponse(responseCode = "500", description = "Error interno", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))}),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+    })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping()
     public ResponseEntity<?> list() {
         try {
@@ -40,6 +61,15 @@ public class MailController {
         }
     }
 
+    @SneakyThrows
+    @Operation(operationId = "add", summary = "Este servicio agrega un Mail.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Temperatura umbral establecida corectamente para una orden."),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "500", description = "Error interno", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))})
+    })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "")
     public ResponseEntity<?> add(@RequestBody Mail mail){
         try {
@@ -54,6 +84,7 @@ public class MailController {
         }
     }
 
+    @Hidden
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") long id){
         try {
