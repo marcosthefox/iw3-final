@@ -20,6 +20,7 @@ import org.mugiwaras.backend.model.persistence.OrdenRepository;
 import org.mugiwaras.backend.model.serializer.ConciliacionSerializer;
 import org.mugiwaras.backend.util.JsonUtiles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -46,6 +47,9 @@ public class OrdenBusiness implements IOrdenBusiness {
     private ClienteBusiness clienteBusiness;
     @Autowired
     private ProductoBusiness productoBusiness;
+
+    @Value("${temperatura.umbral}")
+    private float temperaturaUmbral;
 
     @Override
     public String checkOut(String json, long numeroOrden) throws NotFoundException, BusinessException, JsonProcessingException {
@@ -120,7 +124,7 @@ public class OrdenBusiness implements IOrdenBusiness {
     public Orden add(Orden orden) throws BusinessException, FoundException, NotFoundException {
         //            load(orden.getNumeroOrden());
         Optional<Orden> r = ordenRepository.findByNumeroOrden(orden.getNumeroOrden());
-        if (r.isEmpty()){
+        if (r.isPresent()){
             throw FoundException.builder().message("Ya hay una orden con el nro " + orden.getNumeroOrden()).build();
         }
         Camion camion;
@@ -159,6 +163,9 @@ public class OrdenBusiness implements IOrdenBusiness {
             orden.setEstado(1);
             if (orden.getCodigoExterno() == null) {
                 orden.setCodigoExterno(System.currentTimeMillis() + "");
+            }
+            if (orden.getTemperaturaUmbral() == 0) {
+                orden.setTemperaturaUmbral(temperaturaUmbral);
             }
 
             return ordenRepository.save(orden);
@@ -234,6 +241,18 @@ public class OrdenBusiness implements IOrdenBusiness {
             throw BusinessException.builder().message("Error al cargar la orden").build();
         }
         orden.setAlarma(false);
+        ordenRepository.save(orden);
+    }
+
+    @Override
+    public void setTemperaturaUmbral(long numeroOrden, float temp) throws BusinessException {
+        Orden orden;
+        try {
+            orden = load(numeroOrden);
+        } catch (Exception e) {
+            throw BusinessException.builder().message("Error al cargar la orden").build();
+        }
+        orden.setTemperaturaUmbral(temp);
         ordenRepository.save(orden);
     }
 }

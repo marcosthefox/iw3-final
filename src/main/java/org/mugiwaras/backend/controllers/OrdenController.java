@@ -233,4 +233,24 @@ public class OrdenController extends BaseRestController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    @SneakyThrows
+    @Operation(operationId = "temperatura-umbral", summary = "Este servicio establece la temperatura umbral.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Temperatura umbral establecida corectamente para una orden."),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = StandartResponse.class))})
+    })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping(value = "/temperatura-umbral/{temperatura}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> setTemperaturaUmbral(@RequestHeader(name = "Numero-Orden") long numeroOrden,
+                                                  @PathVariable float temperatura) {
+        try {
+            ordenBusiness.setTemperaturaUmbral(numeroOrden, temperatura);
+            return new ResponseEntity<>("Temperatura umbral establecida para orden con numero: " + numeroOrden, HttpStatus.OK);
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

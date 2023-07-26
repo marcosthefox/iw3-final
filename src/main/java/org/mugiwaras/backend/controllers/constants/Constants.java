@@ -15,6 +15,8 @@ public final class Constants {
 
     public static final String URL_PRODUCTO = URL_API + "/producto";
 
+    public static final String URL_MAIL = URL_API + "/mail";
+
     public static final String URL_LOGIN = URL_API + "/auth/login";
     public static final String URL_DUMMY = URL_API + "/dummy";
 

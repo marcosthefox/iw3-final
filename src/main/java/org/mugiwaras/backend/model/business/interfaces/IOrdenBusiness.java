@@ -26,4 +26,6 @@ public interface IOrdenBusiness {
     String conciliacion(long numeroOrden) throws NotFoundException, JsonProcessingException, BusinessException;
 
     void aceptarAlarma(long numeroOrden) throws BusinessException;
+
+    void setTemperaturaUmbral(long numeroOrden, float temp) throws  BusinessException;
 }

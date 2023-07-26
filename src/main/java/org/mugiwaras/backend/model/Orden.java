@@ -73,6 +73,9 @@ public class Orden implements Serializable {
     @Hidden
     @Column(name = "alarma")
     private boolean alarma; //indica si la alarma de la temperatura para una orden fue aceptada o no.
+    @Hidden
+    @Column(name = "temperatura_umbral")
+    private float temperaturaUmbral;
 
     //Ultimos valores medidos del detalle de carga
     @Hidden

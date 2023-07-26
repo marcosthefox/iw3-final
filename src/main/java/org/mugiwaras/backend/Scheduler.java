@@ -5,10 +5,10 @@ import org.mugiwaras.backend.model.DetalleReciente;
 import org.mugiwaras.backend.model.Orden;
 import org.mugiwaras.backend.model.business.exceptions.BusinessException;
 import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
+import org.mugiwaras.backend.model.business.implementations.MailBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IDetalleBusiness;
 import org.mugiwaras.backend.model.business.interfaces.IOrdenBusiness;
 import org.mugiwaras.backend.model.persistence.OrdenRepository;
-import org.mugiwaras.backend.util.EmailBusiness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -30,18 +30,15 @@ public class Scheduler {
 
     @Autowired
     private IDetalleBusiness detalleBusiness;
-
     @Autowired
     private IOrdenBusiness ordenBusiness;
     @Autowired
     private OrdenRepository ordenRepository;
-
     @Autowired
-    private EmailBusiness emailBusiness;
+    private MailBusiness mailBusiness;
 
-    @Value("${temperaura.send.to:maliendo106@alumnos.iua.edu.ar}")
-    private String temperaturaSendTo;
-
+//    @Value("${temperaura.send.to:maliendo106@alumnos.iua.edu.ar}")
+//    private String temperaturaSendTo;
     @Value("${temperatura.umbral}")
     private float temperaturaUmbral;
 
@@ -61,9 +58,8 @@ public class Scheduler {
 
             Orden orden = ordenBusiness.load(ordenId);
             if (!orden.isAlarma()){ // alarma no fue aceptada aun
-                if (detalle.getDetalleReciente().getTemperatura() > temperaturaUmbral) {
-                    String text="Temperatura umbral superada: " + detalle.getDetalleReciente().getTemperatura() + "\n";
-                    emailBusiness.sendSimpleMessage(temperaturaSendTo, "Temperatura!", text);
+                if (detalle.getDetalleReciente().getTemperatura() > orden.getTemperaturaUmbral()) {
+                    mailBusiness.sendSimpleMessageToAll(detalle.getDetalleReciente().getTemperatura());
                 }
                 orden.setAlarma(true);
                 ordenRepository.save(orden);
