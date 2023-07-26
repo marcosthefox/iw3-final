@@ -13,6 +13,7 @@ import org.mugiwaras.backend.model.business.exceptions.NotFoundException;
 import org.mugiwaras.backend.model.persistence.OrdenRepository;
 import org.springframework.dao.DuplicateKeyException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,6 +83,19 @@ public class OrdenBusinessTest {
     }
 
     @Test
+    public void load_ErrorNoOrden() {
+        //given
+        long numeroOrden = 1;
+        Orden orden = Orden.builder().numeroOrden(numeroOrden).build();
+        given(ordenRepository.findByNumeroOrden(numeroOrden)).willReturn(Optional.empty());
+
+        //When
+        NotFoundException thrown = assertThrows(NotFoundException.class, () -> ordenBusiness.load(orden.getNumeroOrden()));
+        //Then
+        then(thrown.getMessage()).isEqualTo("No se encuentra la orden con id " + numeroOrden);
+    }
+
+    @Test
     public void load_BusinessException() {
         //given
         given(ordenRepository.findByNumeroOrden(any(Long.class))).willThrow(RuntimeException.class);
@@ -104,6 +118,17 @@ public class OrdenBusinessTest {
     }
 
     @Test
+    public void list_EmptyList() throws BusinessException {
+        //given
+        given(ordenRepository.findAll()).willReturn(Collections.emptyList());
+
+        //when
+        List<Orden> result = ordenBusiness.list();
+        //then
+        then(result).isNotNull().isEmpty();
+    }
+
+    @Test
     public void list_Error() {
         // given
         given(ordenRepository.findAll()).willThrow(DuplicateKeyException.class);
@@ -114,12 +139,12 @@ public class OrdenBusinessTest {
         then(thrown.getMessage()).isEqualTo("Error al traer lista de las Ordenes.");
     }
 
-//    @Test
+    @Test
     public void add_OK() throws BusinessException, NotFoundException, FoundException {
         //given
         long numeroOrden = 1;
         Orden orden = Orden.builder().numeroOrden(numeroOrden).build();
-        given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
+//        given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
         given(camionBusiness.exists(any(String.class))).willReturn(true);
 
         Camion camion = Camion.builder().patente("test").code("test").build();
@@ -147,7 +172,7 @@ public class OrdenBusinessTest {
         then(result).isNotNull();
     }
 
-//    @Test
+    //    @Test
 //    public void add_OK_Mutation() throws BusinessException, NotFoundException, FoundException {
 //        //given
 //        long numeroOrden = 1;
@@ -180,13 +205,25 @@ public class OrdenBusinessTest {
 //        //then
 //        then(result).isNotNull();
 //    }
-
-//    @Test
-    public void add_ErrorCamion() {
+    @Test
+    public void add_ErrorOrdenExistente() {
         //given
         long numeroOrden = 1;
         Orden orden = Orden.builder().numeroOrden(numeroOrden).build();
         given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
+
+        //When
+        FoundException thrown = assertThrows(FoundException.class, () -> ordenBusiness.add(orden));
+        //Then
+        then(thrown.getMessage()).isEqualTo("Ya hay una orden con el nro " + orden.getNumeroOrden());
+    }
+
+    @Test
+    public void add_ErrorCamion() {
+        //given
+        long numeroOrden = 1;
+        Orden orden = Orden.builder().numeroOrden(numeroOrden).build();
+//        given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
 
         //When
         BusinessException thrown = assertThrows(BusinessException.class, () -> ordenBusiness.add(orden));
@@ -194,12 +231,12 @@ public class OrdenBusinessTest {
         then(thrown.getMessage()).isEqualTo("Error al crear el camion, en orden.");
     }
 
-//    @Test
+    @Test
     public void add_ErrorChofer() throws FoundException, BusinessException, NotFoundException {
         //given
         long numeroOrden = 1;
         Orden orden = Orden.builder().numeroOrden(numeroOrden).build();
-        given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
+//        given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
         given(camionBusiness.exists(any(String.class))).willReturn(true);
 
         Camion camion = Camion.builder().patente("test").code("test").build();
@@ -214,12 +251,13 @@ public class OrdenBusinessTest {
         //Then
         then(thrown.getMessage()).isEqualTo("Error al crear el chofer, en orden.");
     }
-//    @Test
+
+    @Test
     public void add_ErrorCliente() throws FoundException, BusinessException, NotFoundException {
         //given
         long numeroOrden = 1;
         Orden orden = Orden.builder().numeroOrden(numeroOrden).build();
-        given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
+//        given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
         given(camionBusiness.exists(any(String.class))).willReturn(true);
 
         Camion camion = Camion.builder().patente("test").code("test").build();
@@ -239,12 +277,12 @@ public class OrdenBusinessTest {
         then(thrown.getMessage()).isEqualTo("Error al crear el cliente, en orden.");
     }
 
-//    @Test
+    @Test
     public void add_ErrorProducto() throws FoundException, BusinessException, NotFoundException {
         //given
         long numeroOrden = 1;
         Orden orden = Orden.builder().numeroOrden(numeroOrden).build();
-        given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
+//        given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
         given(camionBusiness.exists(any(String.class))).willReturn(true);
 
         Camion camion = Camion.builder().patente("test").code("test").build();
@@ -268,12 +306,12 @@ public class OrdenBusinessTest {
         then(thrown.getMessage()).isEqualTo("Error al crear el producto, en orden.");
     }
 
-//    @Test
+    @Test
     public void add_ErrorOrden() throws FoundException, BusinessException, NotFoundException {
         //given
         long numeroOrden = 1;
         Orden orden = Orden.builder().numeroOrden(numeroOrden).build();
-        given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
+//        given(ordenRepository.findByNumeroOrden(any(Long.class))).willReturn(Optional.ofNullable(Orden.builder().build()));
         given(camionBusiness.exists(any(String.class))).willReturn(true);
 
         Camion camion = Camion.builder().patente("test").code("test").build();
